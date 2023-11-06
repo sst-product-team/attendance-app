@@ -6,7 +6,17 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, Button, StyleSheet, Appearance, useWindowDimensions, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Appearance,
+  useWindowDimensions,
+  Pressable,
+  PermissionsAndroid,
+  StatusBar
+} from "react-native";
 import SignInScreen from "./src/screens/SignInScreen";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import LinearGradient from "react-native-linear-gradient";
@@ -17,32 +27,147 @@ import HavingTrouble from "./src/components/HavingTrouble";
 import GoogleLogo from "./assets/images/google_logo.svg";
 import MicrosoftLogo from "./assets/images/microsoft_logo.svg";
 import DeviceInfo from "react-native-device-info";
+import GetLocation from 'react-native-get-location';
 
 export default function App(): JSX.Element {
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState('Anonymous');
+  const [did, setdid] = useState("");
+  const [userLat, setUserLat] = useState(0);
+  const [userLong, setUserLong] = useState(0);
+  const [userCord, setUserCord] = useState([]);
+
+
+
+  useEffect(() => {
+    GoogleSignin.configure();
+  }, []);
+
   const {height} = useWindowDimensions();
+
+  const signOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+      if(userLoggedIn) {
+        setUserLoggedIn(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+   function markAttendance() {
+    const UserToBeMarked = {
+      uid: did
+    };
+
+    console.log('Marking Attendance for :  ', UserToBeMarked);
+
+     GetLocation.getCurrentPosition({
+       enableHighAccuracy: true,
+       timeout: 30000,
+       rationale: {
+         title: 'Location permission',
+         message: 'The app needs the permission to request your location.',
+         buttonPositive: 'Ok',
+       },
+     })
+       .then(newLocation => {
+         // setUserLat(newLocation.latitude);
+         // setUserLong(newLocation.longitude);
+         setUserCord([...userCord, newLocation.latitude+","+newLocation.longitude+"\n"]);
+       })
+       .catch(ex => {
+         console.log(ex);
+       });
+
+
+
+  }
+
+
+
   if (userLoggedIn) {
+
     return (
-      <SafeAreaView>
-        <View>
-          <Text>Welcome User</Text>
-          <Button title="Log Out" />
-        </View>
-      </SafeAreaView>
+    <View>
+      <StatusBar animated={true} backgroundColor="#1a1a1a" />
+
+      <LinearGradient colors={['#5B5ABE', '#6D73FB', '#85A0FF']} style={{height: '100%'}} >
+
+        <Text>
+          Hello {userEmail},
+        </Text>
+
+        <Button title='Mark Attendance' onPress={markAttendance} />
+
+        <Text>
+          {userCord}
+        </Text>
+
+
+      </LinearGradient>
+    </View>
     );
   } else {
 
-    useEffect(() => {
-      GoogleSignin.configure();
-    }, []);
+    DeviceInfo.getUniqueId().then((uniqueId) => {
+      setdid(uniqueId);
+    });
 
 
     async function LoginWithGoogleNow() {
       try {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
-        console.log(userInfo);
+        const userEmail = userInfo.user.email;
+        const domain_name_provider = userEmail?.split('@')[1];
+        if(domain_name_provider == "sst.scaler.com") {
+          const UserToLogin = {
+            email: userEmail,
+            uid: did,
+          };
+
+          console.log(userEmail);
+          console.log(did);
+
+          let statCode = 400;
+
+          fetch('http://10.104.124.95:8000/attendance/register/', {
+            method: 'POST',
+            body: JSON.stringify(UserToLogin),
+          })
+            .then(response => {
+              // Handle the response
+              if (response.status == 200) {
+                statCode = 200;
+              } else {
+                throw new Error('Network response was not ok.');
+              }
+            })
+            .then(data => {
+              // User allowed login
+              statCode = 200;
+
+              if(statCode == 200) {
+                setUserLoggedIn(true);
+                setUserEmail(userEmail);
+              } else {
+                console.log("Some error at backend");
+                signOut();
+              }
+            })
+            .catch(error => {
+              statCode = 400;
+            });
+        }
+        else {
+          console.log('User Not authorised to signin');
+          signOut();
+        }
+
+
       } catch (error) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
           console.log('SIGN IN CANCELLED');
@@ -56,20 +181,12 @@ export default function App(): JSX.Element {
       }
     }
 
-    const [StatusBarColor, setStatusBarColor] = useState("#5B5ABE");
-    const [BackgroundGradientTop, setBackgroundGradientTop] = useState("#5B5ABE");
-    const [did, setdid] = useState("");
-    DeviceInfo.getUniqueId().then((uniqueId) => {
-      // iOS: "FCDBD8EF-62FC-4ECB-B2F5-92C9E79AC7F9"
-      // Android: "dd96dec43fb81c97"
-      // Windows: "{2cf7cb3c-da7a-d508-0d7f-696bb51185b4}"
-      setdid(uniqueId);
-      console.log(uniqueId);
-    });
-
     // @ts-ignore
     return (
       <View>
+
+        <StatusBar animated={true} backgroundColor="#5B5ABE" />
+
         <LinearGradient colors={['#5B5ABE', '#6D73FB', '#85A0FF']} style={{height: '100%'}} >
 
 
@@ -80,9 +197,9 @@ export default function App(): JSX.Element {
 
           <View style={[styles.atBottom]}>
 
-            <Text>
-              {did}
-            </Text>
+            {/*<Text>*/}
+            {/*  {did}*/}
+            {/*</Text>*/}
 
             <Pressable style={googlestyles.container} onPress={LoginWithGoogleNow}>
               <GoogleLogo
