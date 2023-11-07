@@ -28,7 +28,9 @@ import GoogleLogo from "./assets/images/google_logo.svg";
 import MicrosoftLogo from "./assets/images/microsoft_logo.svg";
 import DeviceInfo from "react-native-device-info";
 import GetLocation from 'react-native-get-location';
-import * as domain from "domain";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import FlashMessage from "react-native-flash-message";
 
 export default function App(): JSX.Element {
 
@@ -39,13 +41,31 @@ export default function App(): JSX.Element {
   const [userLong, setUserLong] = useState(0);
   const [userCord, setUserCord] = useState([]);
   const [userName, setUserName] = useState("");
-  const domain_URL = 'http://10.104.124.95:8000/';
+  const [ClassData, setClassData] = useState({});
+  const domain_URL = 'https://attendancebackend-v9zk.onrender.com';
 
 
 
   useEffect(() => {
     GoogleSignin.configure();
   }, []);
+
+  // useEffect(() => {
+  //   fetch(
+  //     domain_URL + '/attendance/getcurclassattendance/',
+  //     {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         token: did,
+  //       }),
+  //     }
+  //   ).then((response) => {
+  //     return response.json();
+  //   }).then((classes) => {
+  //     console.log(classes);
+  //       setClassData(classes);
+  //   });
+  // }, []);
 
   const {height} = useWindowDimensions();
 
@@ -60,12 +80,8 @@ export default function App(): JSX.Element {
     }
   };
 
-   function markAttendance() {
-    const UserToBeMarked = {
-      uid: did
-    };
 
-    console.log('Marking Attendance for :  ', UserToBeMarked);
+   function markAttendance() {
 
      GetLocation.getCurrentPosition({
        enableHighAccuracy: true,
@@ -82,35 +98,50 @@ export default function App(): JSX.Element {
          setUserCord([...userCord, newLocation.latitude+","+newLocation.longitude+"\n"]);
          console.log(newLocation.latitude + " " +newLocation.longitude);
 
-         const userData = {
-           uid: did,
+         const UserToBeMarked = {
+           token: did,
            latitutde: newLocation.latitude,
            longitude: newLocation.longitude,
          }
 
-         fetch(domain_URL + '/attendance/geo/', {
+         fetch(domain_URL + '/attendance/', {
            method: 'POST',
-           body: JSON.stringify(userData),
+           body: JSON.stringify(UserToBeMarked),
          })
            .then(response => {
              // Handle the response
              if (response.status == 200) {
 
+               return response.json();
+
              } else {
                throw new Error('Network response was not ok.');
+               return response.json();
              }
            })
            .then(data => {
-             // User allowed login
-             if(statCode == 200) {
 
-             } else {
+             showFlashMessage(
+               'Attendance marked',
+               'Your attendance has been marked.',
+               'success',
+             );
 
-             }
+             // console.warn(data.message);
+
            })
            .catch(error => {
 
+             showFlashMessage(
+               'Attendance not marked',
+               'You are outside class range',
+               'error',
+             );
+
+
            });
+
+
 
 
 
@@ -126,86 +157,65 @@ export default function App(): JSX.Element {
 
 
   const MarkFinalAttendance = () => {
-
-     const StudentToBeMarked = {
-
-     };
+    console.log('Marking final attendance for user :- ', did);
+    markAttendance();
 
   }
-
-  function getClassList() {
-
-    console.log("in getClassList()");
-
-     const UserClass = {
-       token: did,
-     };
-
-    fetch(
-      domain_URL + '/attendance/getcurclassattendance/',
-      {
-        method: "POST",
-        body: JSON.stringify(UserClass),
-      }
-    ).then((response) => {
-      console.log(response.json());
-    });
-
-
-
-
-  };
-
   const getClasses = () => {
 
-     getClassList();
+    console.log(ClassData);
 
-     let classes = [
-       {classID: 1234, className: 'Data Structures and Algorithms', classInstructor: 'Kshitij Mishra', classStartTime: '09:00', classEndTime: '12:00'}
-     ];
-     // let classes= [];
-     if (classes.length === 0) {
-       return (
-         <View style={LoginStyles.classcontainer}>
-           <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
-             <Text style={{fontSize: 16, color: "rgba(217,217,217,0.8)"}}>
-               No class has been added
-             </Text>
-           </View>
-         </View>
-       );
-     } else {
-       return (
-         <View style={LoginStyles.classcontainer}>
 
-           <Text style={{fontSize: 18, marginTop: '6%', marginLeft: '5%', color: '#ffffff'}}>
-             {classes[0].className}
-           </Text>
+    // return (
+    //   <View style={LoginStyles.classcontainer}>
+    //     <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+    //       <Text style={{fontSize: 16, color: "rgba(217,217,217,0.8)"}}>
+    //         No class has been added
+    //       </Text>
+    //     </View>
+    //   </View>
+    // );
 
-           <Text style={{fontSize: 16, marginTop: '3%', marginLeft: '5%', color: '#d7d7d7'}}>
-             by {classes[0].classInstructor}
-           </Text>
+    return (
+      <View style={LoginStyles.classcontainer}>
 
-           <Text style={{fontSize: 12, marginTop: '4%', marginLeft: '5%', color: '#e1e1e1'}}>
-             {classes[0].classStartTime} - {classes[0].classEndTime}
-           </Text>
+        <Text style={{fontSize: 18, marginTop: '6%', marginLeft: '5%', color: '#ffffff'}}>
+          {ClassData.name}
+        </Text>
 
-           <View style={{width: '100%', alignItems: 'center'}}>
-             <Pressable style={LoginStyles.markButton} onPress={MarkFinalAttendance}>
-               <Text style={{fontSize: 15}}>
-                 Mark Attendance
-               </Text>
-             </Pressable>
-           </View>
+        {/*<Text style={{fontSize: 16, marginTop: '3%', marginLeft: '5%', color: '#d7d7d7'}}>*/}
+        {/*  by {classes[0].classInstructor}*/}
+        {/*</Text>*/}
 
-         </View>
-       );
-     }
+        <Text style={{fontSize: 12, marginTop: '4%', marginLeft: '5%', color: '#e1e1e1'}}>
+          {ClassData.start_time} - {ClassData.end_time}
+        </Text>
+
+        <View style={{width: '100%', alignItems: 'center'}}>
+          <Pressable style={LoginStyles.markButton} onPress={MarkFinalAttendance}>
+            <Text style={{fontSize: 15}}>
+              Mark Attendance
+            </Text>
+          </Pressable>
+        </View>
+
+      </View>
+    );
   };
 
+  function showFlashMessage(message, desc, type) {
+    showMessage({
+      message: message,
+      description: desc,
+      type: type,
+      floating: true,
+      duration: 3000,
+    });
+  }
 
 
   if (userLoggedIn) {
+
 
     return (
     <View>
@@ -228,11 +238,56 @@ export default function App(): JSX.Element {
          </View>
 
         <View style={{width: '100%', height:'25%', alignItems: 'center'}}>
-          {getClasses()}
+
+
+          {/*<View style={LoginStyles.classcontainer}>*/}
+          {/*  <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>*/}
+          {/*    <Text style={{fontSize: 16, color: "rgba(217,217,217,0.8)"}}>*/}
+          {/*      No class has been added*/}
+          {/*    </Text>*/}
+          {/*  </View>*/}
+          {/*</View>*/}
+
+
+          <View style={LoginStyles.classcontainer}>
+
+            <Text style={{fontSize: 18, marginTop: '6%', marginLeft: '5%', color: '#ffffff'}}>
+              {ClassData.name}
+            </Text>
+
+            {/*<Text style={{fontSize: 16, marginTop: '3%', marginLeft: '5%', color: '#d7d7d7'}}>*/}
+            {/*  by {classes[0].classInstructor}*/}
+            {/*</Text>*/}
+
+            <Text style={{fontSize: 12, marginTop: '4%', marginLeft: '5%', color: '#e1e1e1'}}>
+              {ClassData.start_time} - {ClassData.end_time}
+            </Text>
+
+            <View style={{width: '100%', alignItems: 'center'}}>
+              <Pressable style={LoginStyles.markButton} onPress={MarkFinalAttendance}>
+                <Text style={{fontSize: 15}}>
+                  Mark Attendance
+                </Text>
+              </Pressable>
+            </View>
+
+          </View>
+
+
+
+
         </View>
       </LinearGradient>
+      <FlashMessage position="bottom"  style={{marginBottom: '5%'}}/>
     </View>
     );
+
+
+
+
+
+
+
   } else {
 
     DeviceInfo.getUniqueId().then((uniqueId) => {
@@ -270,12 +325,27 @@ export default function App(): JSX.Element {
               statCode = 200;
 
               if(statCode == 200) {
-                setUserLoggedIn(true);
                 setUserEmail(userEmail);
                 const username = userInfo.user.name?.split(' ');
                 // @ts-ignore
                 username.concat(' ');
                 setUserName(username[0] + ' ' + username[1]);
+                fetch(
+                  domain_URL + '/attendance/getcurclassattendance/',
+                  {
+                    method: "POST",
+                    body: JSON.stringify({
+                      token: did,
+                    }),
+                  }
+                ).then((response) => {
+                  return response.json();
+                }).then((classes) => {
+                  console.log(classes);
+                  setClassData(classes);
+                });
+                setUserLoggedIn(true);
+
               } else {
                 console.log("Some error at backend");
                 signOut();
@@ -398,7 +468,7 @@ const LoginStyles= StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: '5%',
+    marginTop: '10%',
     borderRadius: 20,
   }
 });
