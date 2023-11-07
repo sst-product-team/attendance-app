@@ -133,7 +133,32 @@ export default function App(): JSX.Element {
 
   }
 
+  function getClassList() {
+
+    console.log("in getClassList()");
+
+     const UserClass = {
+       token: did,
+     };
+
+    fetch(
+      domain_URL + '/attendance/getcurclassattendance/',
+      {
+        method: "POST",
+        body: JSON.stringify(UserClass),
+      }
+    ).then((response) => {
+      console.log(response.json());
+    });
+
+
+
+
+  };
+
   const getClasses = () => {
+
+     getClassList();
 
      let classes = [
        {classID: 1234, className: 'Data Structures and Algorithms', classInstructor: 'Kshitij Mishra', classStartTime: '09:00', classEndTime: '12:00'}
@@ -188,7 +213,7 @@ export default function App(): JSX.Element {
 
       <LinearGradient colors={['#5B5ABE', '#6D73FB', '#85A0FF']} style={{height: '100%'}} >
 
-        <StatusBar animated={true} backgroundColor={"#5B5ABE"} />
+        <StatusBar animated={true} backgroundColor={'#5B5ABE'} />
 
          <View style={{width: '100%', height: 'max-content'}}>
 
