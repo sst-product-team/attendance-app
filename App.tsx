@@ -28,6 +28,7 @@ import GoogleLogo from "./assets/images/google_logo.svg";
 import MicrosoftLogo from "./assets/images/microsoft_logo.svg";
 import DeviceInfo from "react-native-device-info";
 import GetLocation from 'react-native-get-location';
+import * as domain from "domain";
 
 export default function App(): JSX.Element {
 
@@ -37,6 +38,7 @@ export default function App(): JSX.Element {
   const [userLat, setUserLat] = useState(0);
   const [userLong, setUserLong] = useState(0);
   const [userCord, setUserCord] = useState([]);
+  const domain_URL = 'http://192.168.138.104:8000';
 
 
 
@@ -77,6 +79,41 @@ export default function App(): JSX.Element {
          // setUserLat(newLocation.latitude);
          // setUserLong(newLocation.longitude);
          setUserCord([...userCord, newLocation.latitude+","+newLocation.longitude+"\n"]);
+         console.log(newLocation.latitude + " " +newLocation.longitude);
+
+         const userData = {
+           uid: did,
+           latitutde: newLocation.latitude,
+           longitude: newLocation.longitude,
+         }
+
+         fetch(domain_URL + '/attendance/geo/', {
+           method: 'POST',
+           body: JSON.stringify(userData),
+         })
+           .then(response => {
+             // Handle the response
+             if (response.status == 200) {
+
+             } else {
+               throw new Error('Network response was not ok.');
+             }
+           })
+           .then(data => {
+             // User allowed login
+             if(statCode == 200) {
+
+             } else {
+
+             }
+           })
+           .catch(error => {
+
+           });
+
+
+
+
        })
        .catch(ex => {
          console.log(ex);
@@ -133,8 +170,7 @@ export default function App(): JSX.Element {
           console.log(did);
 
           let statCode = 400;
-
-          fetch('http://10.104.124.95:8000/attendance/register/', {
+          fetch(domain_URL + '/attendance/register/', {
             method: 'POST',
             body: JSON.stringify(UserToLogin),
           })
