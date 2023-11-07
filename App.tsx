@@ -38,7 +38,8 @@ export default function App(): JSX.Element {
   const [userLat, setUserLat] = useState(0);
   const [userLong, setUserLong] = useState(0);
   const [userCord, setUserCord] = useState([]);
-  const domain_URL = 'http://192.168.138.104:8000';
+  const [userName, setUserName] = useState("");
+  const domain_URL = 'http://10.104.124.95:8000/';
 
 
 
@@ -124,6 +125,60 @@ export default function App(): JSX.Element {
   }
 
 
+  const MarkFinalAttendance = () => {
+
+     const StudentToBeMarked = {
+
+     };
+
+  }
+
+  const getClasses = () => {
+
+     let classes = [
+       {classID: 1234, className: 'Data Structures and Algorithms', classInstructor: 'Kshitij Mishra', classStartTime: '09:00', classEndTime: '12:00'}
+     ];
+     // let classes= [];
+     if (classes.length === 0) {
+       return (
+         <View style={LoginStyles.classcontainer}>
+           <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+             <Text style={{fontSize: 16, color: "rgba(217,217,217,0.8)"}}>
+               No class has been added
+             </Text>
+           </View>
+         </View>
+       );
+     } else {
+       return (
+         <View style={LoginStyles.classcontainer}>
+
+           <Text style={{fontSize: 18, marginTop: '6%', marginLeft: '5%', color: '#ffffff'}}>
+             {classes[0].className}
+           </Text>
+
+           <Text style={{fontSize: 16, marginTop: '3%', marginLeft: '5%', color: '#d7d7d7'}}>
+             by {classes[0].classInstructor}
+           </Text>
+
+           <Text style={{fontSize: 12, marginTop: '4%', marginLeft: '5%', color: '#e1e1e1'}}>
+             {classes[0].classStartTime} - {classes[0].classEndTime}
+           </Text>
+
+           <View style={{width: '100%', alignItems: 'center'}}>
+             <Pressable style={LoginStyles.markButton} onPress={MarkFinalAttendance}>
+               <Text style={{fontSize: 15}}>
+                 Mark Attendance
+               </Text>
+             </Pressable>
+           </View>
+
+         </View>
+       );
+     }
+  };
+
+
 
   if (userLoggedIn) {
 
@@ -133,17 +188,23 @@ export default function App(): JSX.Element {
 
       <LinearGradient colors={['#5B5ABE', '#6D73FB', '#85A0FF']} style={{height: '100%'}} >
 
-        <Text>
-          Hello {userEmail},
-        </Text>
+        <StatusBar animated={true} backgroundColor={"#5B5ABE"} />
 
-        <Button title='Mark Attendance' onPress={markAttendance} />
+         <View style={{width: '100%', height: 'max-content'}}>
 
-        <Text>
-          {userCord}
-        </Text>
+           <Text style={LoginStyles.welcomemessage}>
+             Good Morning
+           </Text>
 
+           <Text style={LoginStyles.username}>
+             {userName}
+           </Text>
 
+         </View>
+
+        <View style={{width: '100%', height:'25%', alignItems: 'center'}}>
+          {getClasses()}
+        </View>
       </LinearGradient>
     </View>
     );
@@ -166,9 +227,6 @@ export default function App(): JSX.Element {
             uid: did,
           };
 
-          console.log(userEmail);
-          console.log(did);
-
           let statCode = 400;
           fetch(domain_URL + '/attendance/register/', {
             method: 'POST',
@@ -189,6 +247,10 @@ export default function App(): JSX.Element {
               if(statCode == 200) {
                 setUserLoggedIn(true);
                 setUserEmail(userEmail);
+                const username = userInfo.user.name?.split(' ');
+                // @ts-ignore
+                username.concat(' ');
+                setUserName(username[0] + ' ' + username[1]);
               } else {
                 console.log("Some error at backend");
                 signOut();
@@ -284,6 +346,35 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     marginBottom: '3%',
+  }
+});
+
+const LoginStyles= StyleSheet.create({
+  welcomemessage: {
+    fontSize: 18,
+    marginHorizontal: '8%',
+    marginTop: '10%',
+  },
+  username: {
+    fontSize: 40,
+    marginTop: '5%',
+    marginHorizontal: '8%',
+  },
+  classcontainer: {
+    backgroundColor: 'rgba(255, 251, 251, 0.21)',
+    width: '85%',
+    height: '100%',
+    marginVertical: '10%',
+    borderRadius: 20,
+  },
+  markButton: {
+    width: '80%',
+    backgroundColor: '#2f3c7c',
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: '5%',
+    borderRadius: 20,
   }
 });
 
