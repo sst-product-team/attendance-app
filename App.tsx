@@ -42,6 +42,8 @@ export default function App(): JSX.Element {
   const [userLat, setUserLat] = useState(0);
   const [userLong, setUserLong] = useState(0);
   const [userCord, setUserCord] = useState([]);
+  const [markingAttendance, setMarkingAttendance] = useState(false);
+
   const [userName, setUserName] = useState('');
   const [ClassData, setClassData] = useState({});
   const domain_URL = 'https://attendancebackend-v9zk.onrender.com';
@@ -81,6 +83,7 @@ export default function App(): JSX.Element {
   };
 
   function markAttendance() {
+    setMarkingAttendance(true);
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 30000,
@@ -91,6 +94,7 @@ export default function App(): JSX.Element {
       },
     })
       .then(newLocation => {
+        setMarkingAttendance(false);
         // setUserLat(newLocation.latitude);
         // setUserLong(newLocation.longitude);
         setUserCord([
@@ -143,6 +147,7 @@ export default function App(): JSX.Element {
           });
       })
       .catch(ex => {
+        setMarkingAttendance(false);
         console.log(ex);
         showFlashMessage('Problem with Location', '' + ex, 'error');
       });
@@ -268,6 +273,7 @@ export default function App(): JSX.Element {
                   onPress={MarkFinalAttendance}>
                   <Text style={{fontSize: 15}}>Mark Attendance</Text>
                 </Pressable>
+                <Text>{markingAttendance ? 'Processing' : ''}</Text>
               </View>
             </View>
           </View>
@@ -286,7 +292,10 @@ export default function App(): JSX.Element {
         const userInfo = await GoogleSignin.signIn();
         const userEmail = userInfo.user.email;
         const domain_name_provider = userEmail?.split('@')[1];
-        if (true) {
+        if (
+          domain_name_provider === 'sst.scaler.com' ||
+          domain_name_provider === 'scaler.com'
+        ) {
           const UserToLogin = {
             email: userEmail,
             uid: did,
@@ -336,6 +345,7 @@ export default function App(): JSX.Element {
             })
             .catch(error => {
               statCode = 400;
+              signOut();
             });
         } else {
           console.log('User Not authorised to signin');
@@ -379,11 +389,11 @@ export default function App(): JSX.Element {
               <Text style={googlestyles.data}>Login with Google</Text>
             </Pressable>
 
-            <Pressable style={msstyles.container}>
+            {/*<Pressable style={msstyles.container}>
               <MicrosoftLogo />
 
               <Text style={msstyles.data}>Login with Microsoft</Text>
-            </Pressable>
+            </Pressable>*/}
 
             <HavingTrouble />
           </View>
