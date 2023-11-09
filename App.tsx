@@ -52,22 +52,6 @@ export default function App(): JSX.Element {
     GoogleSignin.configure();
   }, []);
 
-  // useEffect(() => {
-  //   fetch(
-  //     domain_URL + '/attendance/getcurclassattendance/',
-  //     {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         token: did,
-  //       }),
-  //     }
-  //   ).then((response) => {
-  //     return response.json();
-  //   }).then((classes) => {
-  //     console.log(classes);
-  //       setClassData(classes);
-  //   });
-  // }, []);
 
   const {height} = useWindowDimensions();
 
