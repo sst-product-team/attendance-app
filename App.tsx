@@ -141,56 +141,6 @@ export default function App(): JSX.Element {
     console.log('Marking final attendance for user :- ', did);
     markAttendance();
   };
-  const getClasses = () => {
-    console.log(ClassData);
-
-    // return (
-    //   <View style={LoginStyles.classcontainer}>
-    //     <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>
-    //       <Text style={{fontSize: 16, color: "rgba(217,217,217,0.8)"}}>
-    //         No class has been added
-    //       </Text>
-    //     </View>
-    //   </View>
-    // );
-
-    return (
-      <View style={LoginStyles.classcontainer}>
-        <Text
-          style={{
-            fontSize: 18,
-            marginTop: '6%',
-            marginLeft: '5%',
-            color: '#ffffff',
-          }}>
-          {ClassData.name}
-        </Text>
-
-        {/*<Text style={{fontSize: 16, marginTop: '3%', marginLeft: '5%', color: '#d7d7d7'}}>*/}
-        {/*  by {classes[0].classInstructor}*/}
-        {/*</Text>*/}
-
-        <Text
-          style={{
-            fontSize: 12,
-            marginTop: '4%',
-            marginLeft: '5%',
-            color: '#e1e1e1',
-          }}>
-          {ClassData.start_time} - {ClassData.end_time}
-        </Text>
-
-        <View style={{width: '100%', alignItems: 'center'}}>
-          <Pressable
-            style={LoginStyles.markButton}
-            onPress={MarkFinalAttendance}>
-            <Text style={{fontSize: 15}}>Mark Attendance</Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  };
-
   function showFlashMessage(message, desc, type) {
     showMessage({
       message: message,
@@ -218,13 +168,6 @@ export default function App(): JSX.Element {
           </View>
 
           <View style={{width: '100%', height: '25%', alignItems: 'center'}}>
-            {/*<View style={LoginStyles.classcontainer}>*/}
-            {/*  <View style={{width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'}}>*/}
-            {/*    <Text style={{fontSize: 16, color: "rgba(217,217,217,0.8)"}}>*/}
-            {/*      No class has been added*/}
-            {/*    </Text>*/}
-            {/*  </View>*/}
-            {/*</View>*/}
 
             <View style={LoginStyles.classcontainer}>
               <Text
@@ -237,9 +180,6 @@ export default function App(): JSX.Element {
                 {ClassData.name}
               </Text>
 
-              {/*<Text style={{fontSize: 16, marginTop: '3%', marginLeft: '5%', color: '#d7d7d7'}}>*/}
-              {/*  by {classes[0].classInstructor}*/}
-              {/*</Text>*/}
 
               <Text
                 style={{
@@ -361,9 +301,6 @@ export default function App(): JSX.Element {
           </View>
 
           <View style={[styles.atBottom]}>
-            {/*<Text>*/}
-            {/*  {did}*/}
-            {/*</Text>*/}
 
             <Pressable
               style={googlestyles.container}
@@ -373,11 +310,6 @@ export default function App(): JSX.Element {
               <Text style={googlestyles.data}>Login with Google</Text>
             </Pressable>
 
-            {/*<Pressable style={msstyles.container}>
-              <MicrosoftLogo />
-
-              <Text style={msstyles.data}>Login with Microsoft</Text>
-            </Pressable>*/}
 
             <HavingTrouble />
           </View>
