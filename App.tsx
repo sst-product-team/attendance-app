@@ -16,6 +16,7 @@ import {
   Pressable,
   PermissionsAndroid,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import SignInScreen from './src/screens/SignInScreen';
 import {
@@ -78,7 +79,7 @@ export default function App(): JSX.Element {
       },
     })
       .then(newLocation => {
-        setMarkingAttendance(false);
+
         // setUserLat(newLocation.latitude);
         // setUserLong(newLocation.longitude);
         setUserCord([
@@ -101,6 +102,7 @@ export default function App(): JSX.Element {
         })
           .then(response => {
             // Handle the response
+            setMarkingAttendance(false);
             console.log(response.status);
             if (response.status == 200) {
               return response.json();
@@ -126,6 +128,7 @@ export default function App(): JSX.Element {
             // console.warn(data.message);
           })
           .catch(error => {
+            setMarkingAttendance(false);
             console.log(error);
             showFlashMessage('Attendance not marked', '' + error, 'error');
           });
@@ -197,7 +200,7 @@ export default function App(): JSX.Element {
                   onPress={MarkFinalAttendance}>
                   <Text style={{fontSize: 15}}>Mark Attendance</Text>
                 </Pressable>
-                <Text>{markingAttendance ? 'Processing' : ''}</Text>
+                {markingAttendance ? <ActivityIndicator color="white" size={47} /> : ""}
               </View>
             </View>
           </View>
