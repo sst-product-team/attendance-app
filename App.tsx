@@ -105,6 +105,7 @@ export default function App(): JSX.Element {
           longitude: newLocation.longitude,
           accuracy: newLocation.accuracy,
         };
+        console.log(UserToBeMarked);
 
         fetch(domain_URL + '/attendance/', {
           method: 'POST',
@@ -112,6 +113,7 @@ export default function App(): JSX.Element {
         })
           .then(response => {
             // Handle the response
+            console.log(response.status);
             if (response.status == 200) {
               return response.json();
             } else if (response.status >= 400 && response.status < 500) {
@@ -136,11 +138,13 @@ export default function App(): JSX.Element {
             // console.warn(data.message);
           })
           .catch(error => {
+            console.log(error);
             showFlashMessage('Attendance not marked', '' + error, 'error');
           });
       })
       .catch(ex => {
         console.log(ex);
+        showFlashMessage('Problem with Location', '' + ex, 'error');
       });
   }
 
