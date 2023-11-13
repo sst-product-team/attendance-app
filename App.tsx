@@ -153,6 +153,9 @@ export default function App(): JSX.Element {
   }
 
   function formatDateObject(dateObject) {
+    if (!dateObject) {
+      return '-';
+    }
     let hour = dateObject.getHours();
     const minute = dateObject.getMinutes();
     let ampm = 'AM';
@@ -203,7 +206,7 @@ export default function App(): JSX.Element {
                 {ClassData?.attendance_start_time
                   ? `Class Window: ${formatDateObject(
                       ClassData.attendance_start_time,
-                    )} - ${formatDateObject(ClassData.attendance_end_time)}`
+                    )} to ${formatDateObject(ClassData.attendance_end_time)}`
                   : '-'}
               </Text>
               <Text
@@ -216,7 +219,7 @@ export default function App(): JSX.Element {
                 {ClassData?.attendance_start_time
                   ? `Attendance Window: ${formatDateObject(
                       ClassData.class_start_time,
-                    )} - ${formatDateObject(ClassData.class_end_time)}`
+                    )} to ${formatDateObject(ClassData.class_end_time)}`
                   : '-'}
               </Text>
 
@@ -298,22 +301,23 @@ export default function App(): JSX.Element {
                     console.log(classes);
 
                     if (classes) {
-                      classes.attendance_start_time = new Date(
-                        classes.attendance_start_time,
-                      );
-                      classes.attendance_end_time = new Date(
-                        classes.attendance_end_time,
-                      );
-                      classes.class_start_time = new Date(
-                        classes.class_start_time,
-                      );
-                      classes.class_end_time = new Date(classes.class_end_time);
+                      classes.attendance_start_time =
+                        classes.attendance_start_time
+                          ? new Date(classes.attendance_start_time)
+                          : null;
+                      classes.attendance_end_time = classes.attendance_end_time
+                        ? new Date(classes.attendance_end_time)
+                        : null;
+                      classes.class_start_time = classes.class_start_time
+                        ? new Date(classes.class_start_time)
+                        : null;
+                      classes.class_end_time = classes.class_end_time
+                        ? new Date(classes.class_end_time)
+                        : null;
 
-                      if (classes.attendance_time) {
-                        classes.attendance_time = new Date(
-                          classes.attendance_time,
-                        );
-                      }
+                      classes.attendance_time = classes.attendance_time
+                        ? new Date(classes.attendance_time)
+                        : null;
                     }
                     setClassData(classes);
                   });
