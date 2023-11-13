@@ -46,13 +46,12 @@ export default function App(): JSX.Element {
   const [markingAttendance, setMarkingAttendance] = useState(false);
 
   const [userName, setUserName] = useState('');
-  const [ClassData, setClassData] = useState({});
+  const [ClassData, setClassData] = useState(null);
   const domain_URL = 'https://attendancebackend-v9zk.onrender.com';
 
   useEffect(() => {
     GoogleSignin.configure();
   }, []);
-
 
   const {height} = useWindowDimensions();
 
@@ -79,7 +78,6 @@ export default function App(): JSX.Element {
       },
     })
       .then(newLocation => {
-
         // setUserLat(newLocation.latitude);
         // setUserLong(newLocation.longitude);
         setUserCord([
@@ -154,6 +152,19 @@ export default function App(): JSX.Element {
     });
   }
 
+  function formatDateObject(dateObject) {
+    let hour = dateObject.getHours();
+    const minute = dateObject.getMinutes();
+    let ampm = 'AM';
+
+    if (hour > 12) {
+      hour = hour - 12;
+      ampm = 'PM';
+    }
+
+    return `${hour}:${minute} ${ampm}`;
+  }
+
   if (userLoggedIn) {
     return (
       <View>
@@ -170,8 +181,7 @@ export default function App(): JSX.Element {
             <Text style={LoginStyles.username}>{userName}</Text>
           </View>
 
-          <View style={{width: '100%', height: '25%', alignItems: 'center'}}>
-
+          <View style={{width: '100%', height: '30%', alignItems: 'center'}}>
             <View style={LoginStyles.classcontainer}>
               <Text
                 style={{
@@ -180,9 +190,8 @@ export default function App(): JSX.Element {
                   marginLeft: '5%',
                   color: '#ffffff',
                 }}>
-                {ClassData.name}
+                {ClassData?.name || 'No scheduled class for now'}
               </Text>
-
 
               <Text
                 style={{
@@ -191,16 +200,38 @@ export default function App(): JSX.Element {
                   marginLeft: '5%',
                   color: '#e1e1e1',
                 }}>
-                {ClassData.start_time} - {ClassData.end_time}
+                {ClassData?.attendance_start_time
+                  ? `Class Window: ${formatDateObject(
+                      ClassData.attendance_start_time,
+                    )} - ${formatDateObject(ClassData.attendance_end_time)}`
+                  : '-'}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  marginTop: '4%',
+                  marginLeft: '5%',
+                  color: '#e1e1e1',
+                }}>
+                {ClassData?.attendance_start_time
+                  ? `Attendance Window: ${formatDateObject(
+                      ClassData.class_start_time,
+                    )} - ${formatDateObject(ClassData.class_end_time)}`
+                  : '-'}
               </Text>
 
               <View style={{width: '100%', alignItems: 'center'}}>
                 <Pressable
-                  style={LoginStyles.markButton}
+                  disabled={ClassData ? false : true}
+                  style={{...LoginStyles.markButton, opacity: 0.4}}
                   onPress={MarkFinalAttendance}>
                   <Text style={{fontSize: 15}}>Mark Attendance</Text>
                 </Pressable>
-                {markingAttendance ? <ActivityIndicator color="white" size={47} /> : ""}
+                {markingAttendance ? (
+                  <ActivityIndicator color="white" size={47} />
+                ) : (
+                  ''
+                )}
               </View>
             </View>
           </View>
@@ -262,6 +293,25 @@ export default function App(): JSX.Element {
                   })
                   .then(classes => {
                     console.log(classes);
+
+                    if (classes) {
+                      classes.attendance_start_time = new Date(
+                        classes.attendance_start_time,
+                      );
+                      classes.attendance_end_time = new Date(
+                        classes.attendance_end_time,
+                      );
+                      classes.class_start_time = new Date(
+                        classes.class_start_time,
+                      );
+                      classes.class_end_time = new Date(classes.class_end_time);
+
+                      if (classes.attendance_time) {
+                        classes.attendance_time = new Date(
+                          classes.attendance_time,
+                        );
+                      }
+                    }
                     setClassData(classes);
                   });
                 setUserLoggedIn(true);
@@ -304,7 +354,6 @@ export default function App(): JSX.Element {
           </View>
 
           <View style={[styles.atBottom]}>
-
             <Pressable
               style={googlestyles.container}
               onPress={LoginWithGoogleNow}>
@@ -312,7 +361,6 @@ export default function App(): JSX.Element {
 
               <Text style={googlestyles.data}>Login with Google</Text>
             </Pressable>
-
 
             <HavingTrouble />
           </View>
