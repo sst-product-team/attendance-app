@@ -223,7 +223,10 @@ export default function App(): JSX.Element {
               <View style={{width: '100%', alignItems: 'center'}}>
                 <Pressable
                   disabled={ClassData ? false : true}
-                  style={{...LoginStyles.markButton, opacity: 0.4}}
+                  style={{
+                    ...LoginStyles.markButton,
+                    opacity: ClassData ? 1 : 0.4,
+                  }}
                   onPress={MarkFinalAttendance}>
                   <Text style={{fontSize: 15}}>Mark Attendance</Text>
                 </Pressable>
