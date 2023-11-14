@@ -205,8 +205,8 @@ export default function App(): JSX.Element {
                 }}>
                 {ClassData?.attendance_start_time
                   ? `Class Window: ${formatDateObject(
-                      ClassData.attendance_start_time,
-                    )} to ${formatDateObject(ClassData.attendance_end_time)}`
+                      ClassData.class_start_time,
+                    )} to ${formatDateObject(ClassData.class_end_time)}`
                   : '-'}
               </Text>
               <Text
@@ -218,8 +218,8 @@ export default function App(): JSX.Element {
                 }}>
                 {ClassData?.attendance_start_time
                   ? `Attendance Window: ${formatDateObject(
-                      ClassData.class_start_time,
-                    )} to ${formatDateObject(ClassData.class_end_time)}`
+                      ClassData.attendance_start_time,
+                    )} to ${formatDateObject(ClassData.attendance_end_time)}`
                   : '-'}
               </Text>
 
