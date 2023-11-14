@@ -228,10 +228,17 @@ export default function App(): JSX.Element {
                   disabled={ClassData ? false : true}
                   style={{
                     ...LoginStyles.markButton,
+                    backgroundColor: ClassData?.attendance_time
+                      ? 'green'
+                      : '#2f3c7c',
                     opacity: ClassData ? 1 : 0.4,
                   }}
                   onPress={MarkFinalAttendance}>
-                  <Text style={{fontSize: 15}}>Mark Attendance</Text>
+                  <Text style={{fontSize: 15}}>
+                    {ClassData?.attendance_time
+                      ? '👍Present'
+                      : 'Mark Attendance'}
+                  </Text>
                 </Pressable>
                 {markingAttendance ? (
                   <ActivityIndicator color="white" size={47} />
