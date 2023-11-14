@@ -160,10 +160,8 @@ export default function App(): JSX.Element {
     const minute = dateObject.getMinutes();
     let ampm = 'AM';
 
-    if (hour > 12) {
-      hour = hour - 12;
-      ampm = 'PM';
-    }
+    if (hour >= 12) ampm = 'PM';
+    if (hour > 12) hour = hour - 12;
 
     return `${hour}:${minute} ${ampm}`;
   }
