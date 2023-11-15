@@ -1,7 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
+ * Scaler School of Technology Application
  * @format
  */
 
@@ -9,34 +7,28 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  Button,
   StyleSheet,
-  Appearance,
   useWindowDimensions,
   Pressable,
-  PermissionsAndroid,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
-import SignInScreen from './src/screens/SignInScreen';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import LinearGradient from 'react-native-linear-gradient';
 import Logo from './assets/images/scaler_logo.svg';
-import SignInWithGoogle from './src/components/SignInWithGoogle/SignInWithGoogle';
-import SignInWithMicrosoft from './src/components/SignInWithMicrosoft';
 import HavingTrouble from './src/components/HavingTrouble';
 import GoogleLogo from './assets/images/google_logo.svg';
-import MicrosoftLogo from './assets/images/microsoft_logo.svg';
-import DeviceInfo from 'react-native-device-info';
+import DeviceInfo, {hasSystemFeatureSync} from 'react-native-device-info';
 import GetLocation from 'react-native-get-location';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import {showMessage} from 'react-native-flash-message';
 import FlashMessage from 'react-native-flash-message';
+import JailMonkey from 'jail-monkey';
 
 export default function App(): JSX.Element {
+  const [isDeviceValid, setIsDeviceValid] = useState(true);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('Anonymous');
   const [did, setdid] = useState('');
@@ -44,13 +36,33 @@ export default function App(): JSX.Element {
   const [userLong, setUserLong] = useState(0);
   const [userCord, setUserCord] = useState([]);
   const [markingAttendance, setMarkingAttendance] = useState(false);
-
   const [userName, setUserName] = useState('');
   const [ClassData, setClassData] = useState(null);
   const domain_URL = 'https://attendancebackend-v9zk.onrender.com';
+  const [devStatus, setDevStatus] = useState(true);
 
   useEffect(() => {
     GoogleSignin.configure();
+  }, []);
+
+
+  useEffect(() => {
+
+    const checkValidity = async () => {
+      try {
+        const DevMode = await JailMonkey.isDevelopmentSettingsMode();
+        const TrustFall = JailMonkey.trustFall();
+        const DebugMode = await JailMonkey.isDebuggedMode();
+        if (DevMode || TrustFall || DebugMode) {
+          setDevStatus(true);
+        }
+      } catch (error) {
+        console.log('Error Occurred :- ', error);
+      }
+    };
+
+    checkValidity();
+    console.log(devStatus);
   }, []);
 
   const {height} = useWindowDimensions();
@@ -93,6 +105,16 @@ export default function App(): JSX.Element {
           accuracy: newLocation.accuracy,
         };
         console.log(UserToBeMarked);
+
+        if (devStatus) {
+          showFlashMessage(
+            'Developer mode enabled',
+            'Disable developer mode to mark attendance',
+            'error',
+          );
+          setMarkingAttendance(false);
+          return;
+        }
 
         fetch(domain_URL + '/attendance/', {
           method: 'POST',
