@@ -3,7 +3,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react'; // importing react module
 import {
   View,
   Text,
@@ -12,61 +12,57 @@ import {
   Pressable,
   StatusBar,
   ActivityIndicator,
-} from 'react-native';
+} from 'react-native'; // importing react-native
 import {
   GoogleSignin,
   statusCodes,
-} from '@react-native-google-signin/google-signin';
-import LinearGradient from 'react-native-linear-gradient';
-import Logo from './assets/images/scaler_logo.svg';
-import HavingTrouble from './src/components/HavingTrouble';
-import GoogleLogo from './assets/images/google_logo.svg';
-import DeviceInfo, {hasSystemFeatureSync} from 'react-native-device-info';
-import GetLocation from 'react-native-get-location';
-import {showMessage} from 'react-native-flash-message';
-import FlashMessage from 'react-native-flash-message';
-import JailMonkey from 'jail-monkey';
+} from '@react-native-google-signin/google-signin'; // to implement google sign in
+import LinearGradient from 'react-native-linear-gradient'; // implement linear gradient in screens
+import Logo from './assets/images/scaler_logo.svg'; // import scaler school of technology SVG logo
+import HavingTrouble from './src/components/HavingTrouble'; // show the having trouble link in sign in page
+import GoogleLogo from './assets/images/google_logo.svg'; // import the Google SVG logo
+import DeviceInfo from 'react-native-device-info'; // module to bring device info from
+import GetLocation from 'react-native-get-location'; // get user location from device
+import FlashMessage, {showMessage} from 'react-native-flash-message'; // module to flash messages on device screen
+import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
 
 export default function App(): JSX.Element {
-  const [isDeviceValid, setIsDeviceValid] = useState(true);
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState('Anonymous');
-  const [did, setdid] = useState('');
-  const [userLat, setUserLat] = useState(0);
-  const [userLong, setUserLong] = useState(0);
-  const [userCord, setUserCord] = useState([]);
-  const [markingAttendance, setMarkingAttendance] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [ClassData, setClassData] = useState(null);
-  const domain_URL = 'https://attendancebackend-v9zk.onrender.com';
-  const [devStatus, setDevStatus] = useState(true);
+  const [userLoggedIn, setUserLoggedIn] = useState(false); // check if user logged in or not
+  const [userEmail, setUserEmail] = useState('Anonymous'); // state to store user email
+  const [did, setdid] = useState(''); // state to store Device ID from react-native-device-info
+  const [userCord, setUserCord] = useState([]); // state to store user coordinates
+  const [markingAttendance, setMarkingAttendance] = useState(false); // state to store marking attendance
+  const [userName, setUserName] = useState(''); // state to store username
+  const [ClassData, setClassData] = useState(null); // state to store class data.
+  const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
 
+  /**
+   * Effect to configure Google Sign In for application
+   * */
   useEffect(() => {
     GoogleSignin.configure();
   }, []);
 
+  /**
+   * Function to check validity of device for marking attendance.
+   *
+   * return true if phone is either in developer mode, debug mode or is Jail Broken
+   * */
+  const checkValidity = async () => {
+    const DevMode = await JailMonkey.isDevelopmentSettingsMode(); // check if developer is on
+    const TrustFall = JailMonkey.trustFall(); // check for TrustFall
+    const DebugMode = await JailMonkey.isDebuggedMode(); // Check if debug mode is on
+    return DevMode;
+  };
 
-  useEffect(() => {
-
-    const checkValidity = async () => {
-      try {
-        const DevMode = await JailMonkey.isDevelopmentSettingsMode();
-        const TrustFall = JailMonkey.trustFall();
-        const DebugMode = await JailMonkey.isDebuggedMode();
-        if (DevMode || TrustFall || DebugMode) {
-          setDevStatus(true);
-        }
-      } catch (error) {
-        console.log('Error Occurred :- ', error);
-      }
-    };
-
-    checkValidity();
-    console.log(devStatus);
-  }, []);
-
+  /**
+   * get height of device screen from react-native
+   * */
   const {height} = useWindowDimensions();
 
+  /**
+   * Function to sign out user.
+   * */
   const signOut = async () => {
     try {
       await GoogleSignin.signOut();
@@ -78,8 +74,11 @@ export default function App(): JSX.Element {
     }
   };
 
+  /**
+   * function to mark attendance of student at stage 2.
+   * */
   function markAttendance() {
-    setMarkingAttendance(true);
+    setMarkingAttendance(true); // change state of marking attendance to true
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 30000,
@@ -95,8 +94,7 @@ export default function App(): JSX.Element {
         setUserCord([
           ...userCord,
           newLocation.latitude + ',' + newLocation.longitude + '\n',
-        ]);
-        console.log(newLocation.latitude + ' ' + newLocation.longitude);
+        ]); // change state of user coordinates
 
         const UserToBeMarked = {
           token: did,
@@ -104,17 +102,8 @@ export default function App(): JSX.Element {
           longitude: newLocation.longitude,
           accuracy: newLocation.accuracy,
         };
-        console.log(UserToBeMarked);
 
-        if (devStatus) {
-          showFlashMessage(
-            'Developer mode enabled',
-            'Disable developer mode to mark attendance',
-            'error',
-          );
-          setMarkingAttendance(false);
-          return;
-        }
+        setMarkingAttendance(false); // set marking attendance to false once attendance is marked
 
         fetch(domain_URL + '/attendance/', {
           method: 'POST',
@@ -143,9 +132,8 @@ export default function App(): JSX.Element {
               'Attendance marked',
               'Your attendance has been marked.',
               'success',
-            );
+            ); // show success message on successfully marking attendance.
 
-            // console.warn(data.message);
           })
           .catch(error => {
             setMarkingAttendance(false);
@@ -161,10 +149,30 @@ export default function App(): JSX.Element {
   }
 
   const MarkFinalAttendance = () => {
-    console.log('Marking final attendance for user :- ', did);
-    markAttendance();
+
+    checkValidity().then((unsafe) => {
+      if(unsafe) {
+        showFlashMessage(
+          'Developer mode enabled',
+          'Turn off developer mode to mark attendance',
+          'error',
+        );
+      } else {
+        console.log('Marking final attendance for user :- ', did);
+        markAttendance();
+      }
+    });
   };
-  function showFlashMessage(message, desc, type) {
+
+  const RepeatedMarking = async () => {
+    const requests = 5;
+    MarkFinalAttendance();
+    // for (let i = 0; i < requests; i++) {
+    //   MarkFinalAttendance();
+    // }
+  };
+
+  function showFlashMessage(message: string, desc: string, type: string) {
     showMessage({
       message: message,
       description: desc,
@@ -182,8 +190,12 @@ export default function App(): JSX.Element {
     const minute = dateObject.getMinutes();
     let ampm = 'AM';
 
-    if (hour >= 12) ampm = 'PM';
-    if (hour > 12) hour = hour - 12;
+    if (hour >= 12) {
+      ampm = 'PM';
+    }
+    if (hour > 12) {
+      hour = hour - 12;
+    }
 
     return `${hour}:${minute} ${ampm}`;
   }
@@ -253,7 +265,7 @@ export default function App(): JSX.Element {
                       : '#2f3c7c',
                     opacity: ClassData ? 1 : 0.4,
                   }}
-                  onPress={MarkFinalAttendance}>
+                  onPress={RepeatedMarking}>
                   <Text style={{fontSize: 15}}>
                     {ClassData?.attendance_time
                       ? '👍Present'
