@@ -101,6 +101,7 @@ export default function App(): JSX.Element {
           latitutde: newLocation.latitude,
           longitude: newLocation.longitude,
           accuracy: newLocation.accuracy,
+          version: '0.2.3',
         };
 
         setMarkingAttendance(false); // set marking attendance to false once attendance is marked
@@ -133,7 +134,6 @@ export default function App(): JSX.Element {
               'Your attendance has been marked.',
               'success',
             ); // show success message on successfully marking attendance.
-
           })
           .catch(error => {
             setMarkingAttendance(false);
@@ -149,9 +149,8 @@ export default function App(): JSX.Element {
   }
 
   const MarkFinalAttendance = () => {
-
-    checkValidity().then((unsafe) => {
-      if(unsafe) {
+    checkValidity().then(unsafe => {
+      if (unsafe) {
         showFlashMessage(
           'Developer mode enabled',
           'Turn off developer mode to mark attendance',
