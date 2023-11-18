@@ -25,6 +25,7 @@ import DeviceInfo from 'react-native-device-info'; // module to bring device inf
 import GetLocation from 'react-native-get-location'; // get user location from device
 import FlashMessage, {showMessage} from 'react-native-flash-message'; // module to flash messages on device screen
 import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
+import {sign} from 'react-native-pure-jwt';
 
 export default function App(): JSX.Element {
   const [userLoggedIn, setUserLoggedIn] = useState(false); // check if user logged in or not
@@ -53,6 +54,20 @@ export default function App(): JSX.Element {
     const TrustFall = JailMonkey.trustFall(); // check for TrustFall
     const DebugMode = await JailMonkey.isDebuggedMode(); // Check if debug mode is on
     return DevMode;
+  };
+
+  const signToken = async (mail, payload) => {
+    return await sign(
+      {
+        iss: mail,
+        exp: new Date().getTime() + 20 * 1000, // expiration date, required, in ms, absolute to 1/1/1970
+        did: payload,
+      }, // body
+      'this_is_not_secret_key', // secret
+      {
+        alg: 'HS256',
+      },
+    );
   };
 
   /**
@@ -88,7 +103,7 @@ export default function App(): JSX.Element {
         buttonPositive: 'Ok',
       },
     })
-      .then(newLocation => {
+      .then(async newLocation => {
         // setUserLat(newLocation.latitude);
         // setUserLong(newLocation.longitude);
         setUserCord([
@@ -96,12 +111,13 @@ export default function App(): JSX.Element {
           newLocation.latitude + ',' + newLocation.longitude + '\n',
         ]); // change state of user coordinates
 
+        const jwtToken = await signToken('', did);
         const UserToBeMarked = {
-          token: did,
+          jwtToken: jwtToken,
           latitutde: newLocation.latitude,
           longitude: newLocation.longitude,
           accuracy: newLocation.accuracy,
-          version: '0.2.3',
+          version: '0.2.4',
         };
 
         setMarkingAttendance(false); // set marking attendance to false once attendance is marked
@@ -292,15 +308,18 @@ export default function App(): JSX.Element {
       try {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
+
         const userEmail = userInfo.user.email;
         const domain_name_provider = userEmail?.split('@')[1];
+        const token = await signToken(userEmail, did);
+
         if (
           domain_name_provider === 'sst.scaler.com' ||
           domain_name_provider === 'scaler.com'
         ) {
           const UserToLogin = {
-            email: userEmail,
-            uid: did,
+            name: userInfo.user.name,
+            jwtToken: token,
           };
 
           let statCode = 400;
