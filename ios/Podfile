@@ -1,5 +1,5 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
-pod 'react-native-pure-jwt', :podspec => '../node_modules/react-native-pure-jwt/react-native-pure-jwt.podspec'
+pod 'react-native-pure-jwt', :path => '../node_modules/react-native-pure-jwt'
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
     "react-native/scripts/react_native_pods.rb",
@@ -8,6 +8,12 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+pod 'Firebase', :modular_headers => true
+pod 'FirebaseCoreInternal', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
+pod 'GoogleSignIn', :modular_headers => true
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
@@ -59,5 +65,12 @@ target 'sst' do
       :mac_catalyst_enabled => false
     )
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    installer.pods_project.targets.each do |target|
+      if target.name == 'React-folly'
+        target.build_configurations.each do |config|
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', 'RCT_HAS_FOLLY=0']
+        end
+      end
+    end
   end
 end
