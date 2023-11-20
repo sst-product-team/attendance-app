@@ -27,6 +27,7 @@ import GetLocation from 'react-native-get-location'; // get user location from d
 import FlashMessage, {showMessage} from 'react-native-flash-message'; // module to flash messages on device screen
 import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
 import {sign} from 'react-native-pure-jwt';
+import WelcomeMessage from "./src/components/WelcomeMessage";
 
 const APP_VERSION = '0.2.5';
 
@@ -40,7 +41,8 @@ export default function App(): JSX.Element {
   const [markingAttendance, setMarkingAttendance] = useState(false); // state to store marking attendance
   const [userName, setUserName] = useState(''); // state to store username
   const [ClassData, setClassData] = useState(null); // state to store class data.
-  const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
+  // const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
+  const domain_URL = 'http://192.168.23.104:8000'; // API URL to make requests to database
 
   /**
    * Effect to configure Google Sign In for application
@@ -83,6 +85,11 @@ export default function App(): JSX.Element {
       },
     );
   };
+
+
+  function doNoting() {
+
+  }
 
   /**
    * get height of device screen from react-native
@@ -180,6 +187,7 @@ export default function App(): JSX.Element {
 
   const MarkFinalAttendance = () => {
     checkValidity().then(unsafe => {
+      // if (false) {
       if (unsafe) {
         showFlashMessage(
           'Developer mode enabled',
@@ -240,12 +248,20 @@ export default function App(): JSX.Element {
           <StatusBar animated={true} backgroundColor={'#5B5ABE'} />
 
           <View style={{width: '100%', height: 'max-content'}}>
-            <Text style={LoginStyles.welcomemessage}>Good Morning</Text>
+            <WelcomeMessage />
 
             <Text style={LoginStyles.username}>{userName}</Text>
           </View>
 
-          <View style={{width: '100%', height: '30%', alignItems: 'center'}}>
+        {/*  Seating Display */}
+
+          <View
+            style={{width: '100%', height: '15%', alignItems: 'center'}} />
+
+          {/* Class Display */}
+
+
+          <View style={{width: '100%', height: '15%', alignItems: 'center'}}>
             <View style={LoginStyles.classcontainer}>
               <Text
                 style={{
@@ -266,8 +282,8 @@ export default function App(): JSX.Element {
                 }}>
                 {ClassData?.attendance_start_time
                   ? `Class Window: ${formatDateObject(
-                      ClassData.class_start_time,
-                    )} to ${formatDateObject(ClassData.class_end_time)}`
+                    ClassData.class_start_time,
+                  )} to ${formatDateObject(ClassData.class_end_time)}`
                   : '-'}
               </Text>
               <Text
@@ -279,36 +295,46 @@ export default function App(): JSX.Element {
                 }}>
                 {ClassData?.attendance_start_time
                   ? `Attendance Window: ${formatDateObject(
-                      ClassData.attendance_start_time,
-                    )} to ${formatDateObject(ClassData.attendance_end_time)}`
+                    ClassData.attendance_start_time,
+                  )} to ${formatDateObject(ClassData.attendance_end_time)}`
                   : '-'}
               </Text>
 
-              <View style={{width: '100%', alignItems: 'center'}}>
-                <Pressable
-                  disabled={ClassData ? false : true}
-                  style={{
-                    ...LoginStyles.markButton,
-                    backgroundColor: ClassData?.attendance_time
-                      ? 'green'
-                      : '#2f3c7c',
-                    opacity: ClassData ? 1 : 0.4,
-                  }}
-                  onPress={RepeatedMarking}>
-                  <Text style={{fontSize: 15}}>
-                    {ClassData?.attendance_time
-                      ? '👍Present'
-                      : 'Mark Attendance'}
-                  </Text>
-                </Pressable>
-                {markingAttendance ? (
-                  <ActivityIndicator color="white" size={47} />
-                ) : (
-                  ''
-                )}
-              </View>
+              {/*  attendance button here */}
+
+
             </View>
           </View>
+
+          <View style={{width: '100%', alignItems: 'center'}}>
+            <Pressable
+              disabled={ClassData ? false : true}
+              style={{
+                ...LoginStyles.markButton,
+                backgroundColor: ClassData?.attendance_time
+                  ? 'rgb(69,122,44)'
+                  : '#1e2642',
+                opacity: ClassData ? 1 : 0.4,
+              }}
+              onPress={ClassData?.attendance_time ? doNoting : RepeatedMarking}>
+              <Text style={{fontSize: 15}}>
+                {ClassData?.attendance_time
+                  ? '👍 Present'
+                  : 'Mark Attendance'}
+              </Text>
+            </Pressable>
+            {markingAttendance ? (
+              <ActivityIndicator color="white" size={47} />
+            ) : (
+              ''
+            )}
+          </View>
+
+
+
+
+
+
         </LinearGradient>
         <FlashMessage position="bottom" style={{marginBottom: '5%'}} />
       </View>
@@ -516,11 +542,6 @@ const styles = StyleSheet.create({
 });
 
 const LoginStyles = StyleSheet.create({
-  welcomemessage: {
-    fontSize: 18,
-    marginHorizontal: '8%',
-    marginTop: '10%',
-  },
   username: {
     fontSize: 40,
     marginTop: '5%',
@@ -530,16 +551,16 @@ const LoginStyles = StyleSheet.create({
     backgroundColor: 'rgba(255, 251, 251, 0.21)',
     width: '85%',
     height: '100%',
-    marginVertical: '10%',
+    marginVertical: '8%',
     borderRadius: 20,
   },
   markButton: {
-    width: '80%',
-    backgroundColor: '#2f3c7c',
+    width: '70%',
+    backgroundColor: '#12142d',
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: '10%',
+    marginTop: '13%',
     borderRadius: 20,
   },
 });
@@ -561,6 +582,16 @@ const googlestyles = StyleSheet.create({
     fontSize: 18,
     paddingLeft: 25,
     fontFamily: 'Alata Regular',
+  },
+});
+
+const Seating = StyleSheet.create({
+  container: {
+    backgroundColor: 'rgba(255, 251, 251, 0.21)',
+    width: '85%',
+    height: '10%',
+    marginTop: '10%',
+    borderRadius: 20,
   },
 });
 
