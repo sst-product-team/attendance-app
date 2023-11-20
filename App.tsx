@@ -28,6 +28,7 @@ import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
 import {sign} from 'react-native-pure-jwt';
 
 export default function App(): JSX.Element {
+  const [loggInError, setLoggInError] = useState(null); // check if user logged in or not
   const [userLoggedIn, setUserLoggedIn] = useState(false); // check if user logged in or not
   const [userEmail, setUserEmail] = useState('Anonymous'); // state to store user email
   const [did, setdid] = useState(''); // state to store Device ID from react-native-device-info
@@ -327,10 +328,15 @@ export default function App(): JSX.Element {
             method: 'POST',
             body: JSON.stringify(UserToLogin),
           })
-            .then(response => {
+            .then(async response => {
               // Handle the response
+              console.log(response);
               if (response.status == 200) {
                 statCode = 200;
+              } else if (response.status >= 400 && response.status < 500) {
+                let errorMessage = await response.json();
+                setLoggInError(errorMessage.message);
+                throw new Error(errorMessage.message);
               } else {
                 throw new Error('Network response was not ok.');
               }
@@ -387,8 +393,10 @@ export default function App(): JSX.Element {
             .catch(error => {
               statCode = 400;
               signOut();
+              setLoggInError('' + error);
             });
         } else {
+          setLoggInError('User Not authorised to signin');
           console.log('User Not authorised to signin');
           signOut();
         }
@@ -418,6 +426,7 @@ export default function App(): JSX.Element {
           </View>
 
           <View style={[styles.atBottom]}>
+            <HavingTrouble error={loggInError} />
             <Pressable
               style={googlestyles.container}
               onPress={LoginWithGoogleNow}>
@@ -425,8 +434,6 @@ export default function App(): JSX.Element {
 
               <Text style={googlestyles.data}>Login with Google</Text>
             </Pressable>
-
-            <HavingTrouble />
           </View>
         </LinearGradient>
       </View>
