@@ -12,6 +12,7 @@ import {
   Pressable,
   StatusBar,
   ActivityIndicator,
+  Linking,
 } from 'react-native'; // importing react-native
 import {
   GoogleSignin,
@@ -27,7 +28,10 @@ import FlashMessage, {showMessage} from 'react-native-flash-message'; // module 
 import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
 import {sign} from 'react-native-pure-jwt';
 
+const APP_VERSION = '0.2.5';
+
 export default function App(): JSX.Element {
+  const [latestAPPDATA, setLatestAPPDATA] = useState(null);
   const [loggInError, setLoggInError] = useState(null); // check if user logged in or not
   const [userLoggedIn, setUserLoggedIn] = useState(false); // check if user logged in or not
   const [userEmail, setUserEmail] = useState('Anonymous'); // state to store user email
@@ -43,6 +47,15 @@ export default function App(): JSX.Element {
    * */
   useEffect(() => {
     GoogleSignin.configure();
+  }, []);
+
+  useEffect(() => {
+    const fn = async () => {
+      let data = await fetch(domain_URL + '/attendance/version');
+      data = await data.json();
+      setLatestAPPDATA(data);
+    };
+    fn();
   }, []);
 
   /**
@@ -118,7 +131,7 @@ export default function App(): JSX.Element {
           latitutde: newLocation.latitude,
           longitude: newLocation.longitude,
           accuracy: newLocation.accuracy,
-          version: '0.2.4',
+          version: APP_VERSION,
         };
 
         setMarkingAttendance(false); // set marking attendance to false once attendance is marked
@@ -424,7 +437,47 @@ export default function App(): JSX.Element {
           <View style={styles.root}>
             <Logo size={height * 0.4} style={styles.logo} />
           </View>
-
+          <View style={styles.root}>
+            <Text
+              style={{
+                fontSize: 18,
+                marginTop: '6%',
+                marginLeft: '5%',
+                color: '#ffffff',
+              }}>
+              APP_VERSION: {APP_VERSION}
+            </Text>
+            <Text
+              style={{
+                fontSize: 18,
+                marginTop: '6%',
+                marginLeft: '5%',
+                color: '#ffffff',
+              }}>
+              {latestAPPDATA ? `LATEST_VERSION: ${latestAPPDATA.version}` : ''}
+            </Text>
+            <Text
+              style={{
+                fontSize: 18,
+                marginTop: '6%',
+                marginLeft: '5%',
+                color: '#ffffff',
+              }}></Text>
+          </View>
+          <View style={{width: '100%', alignItems: 'center'}}>
+            {APP_VERSION !==
+            (latestAPPDATA ? latestAPPDATA.version : APP_VERSION) ? (
+              <Pressable
+                style={LoginStyles.markButton}
+                onPress={async () => {
+                  await Linking.openURL(latestAPPDATA.APK_FILE);
+                }}>
+                <Text style={{color: 'white'}}>Download Latest App</Text>
+              </Pressable>
+            ) : (
+              ''
+            )}
+          </View>
           <View style={[styles.atBottom]}>
             <HavingTrouble error={loggInError} />
             <Pressable
