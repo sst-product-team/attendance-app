@@ -43,8 +43,8 @@ export default function App(): JSX.Element {
   const [markingAttendance, setMarkingAttendance] = useState(false); // state to store marking attendance
   const [userName, setUserName] = useState(''); // state to store username
   const [ClassData, setClassData] = useState(null); // state to store class data.
-  const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
-  // const domain_URL = 'http://192.168.229.104:8000'; // API URL to make requests to database
+  // const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
+  const domain_URL = 'http://10.101.103.26:8000'; // API URL to make requests to database
 
   /**
    * Effect to configure Google Sign In for application
@@ -322,7 +322,7 @@ export default function App(): JSX.Element {
                 opacity: ClassData ? 1 : 0.4,
               }}
               onPress={ClassData?.attendance_time ? doNoting : RepeatedMarking}>
-              <Text style={{fontSize: 15}}>
+              <Text style={{fontSize: 15, color: '#EAEAEAFF'}}>
                 {ClassData?.attendance_time
                   ? '👍 Present'
                   : 'Mark Attendance'}
@@ -551,6 +551,7 @@ const LoginStyles = StyleSheet.create({
     fontSize: 40,
     marginTop: '5%',
     marginHorizontal: '8%',
+    color: '#EAEAEAFF'
   },
   classcontainer: {
     backgroundColor: 'rgba(255, 251, 251, 0.21)',

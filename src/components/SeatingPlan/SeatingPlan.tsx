@@ -29,7 +29,7 @@ const SeatingPlan = (student) => {
       <View style={Seating.container}>
         <View style={{width: '60%', height: '100%', borderBottomLeftRadius: 20, borderTopLeftRadius: 20}}>
           <View style={{width: '100%', height: '60%', justifyContent: 'center', fontFamily: 'Alata Regular', marginLeft: '8%' }}>
-            <Text style={{fontSize: 25}}>
+            <Text style={{fontSize: 25, color: '#eaeaea'}}>
               Seating Plan
             </Text>
           </View>
