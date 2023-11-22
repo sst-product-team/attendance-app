@@ -28,8 +28,10 @@ import FlashMessage, {showMessage} from 'react-native-flash-message'; // module 
 import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
 import {sign} from 'react-native-pure-jwt';
 import WelcomeMessage from "./src/components/WelcomeMessage";
+import SeatingPlan from "./src/components/SeatingPlan";
 
-const APP_VERSION = '0.2.5';
+
+const APP_VERSION = '0.3.1';
 
 export default function App(): JSX.Element {
   const [latestAPPDATA, setLatestAPPDATA] = useState(null);
@@ -41,8 +43,8 @@ export default function App(): JSX.Element {
   const [markingAttendance, setMarkingAttendance] = useState(false); // state to store marking attendance
   const [userName, setUserName] = useState(''); // state to store username
   const [ClassData, setClassData] = useState(null); // state to store class data.
-  // const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
-  const domain_URL = 'http://192.168.23.104:8000'; // API URL to make requests to database
+  const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
+  // const domain_URL = 'http://192.168.229.104:8000'; // API URL to make requests to database
 
   /**
    * Effect to configure Google Sign In for application
@@ -58,6 +60,10 @@ export default function App(): JSX.Element {
       setLatestAPPDATA(data);
     };
     fn();
+  }, []);
+
+  useEffect(() => {
+
   }, []);
 
   /**
@@ -255,8 +261,7 @@ export default function App(): JSX.Element {
 
         {/*  Seating Display */}
 
-          <View
-            style={{width: '100%', height: '15%', alignItems: 'center'}} />
+          <SeatingPlan student={userEmail} />
 
           {/* Class Display */}
 
@@ -582,16 +587,6 @@ const googlestyles = StyleSheet.create({
     fontSize: 18,
     paddingLeft: 25,
     fontFamily: 'Alata Regular',
-  },
-});
-
-const Seating = StyleSheet.create({
-  container: {
-    backgroundColor: 'rgba(255, 251, 251, 0.21)',
-    width: '85%',
-    height: '10%',
-    marginTop: '10%',
-    borderRadius: 20,
   },
 });
 
