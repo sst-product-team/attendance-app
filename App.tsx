@@ -27,14 +27,14 @@ import GetLocation from 'react-native-get-location'; // get user location from d
 import FlashMessage, {showMessage} from 'react-native-flash-message'; // module to flash messages on device screen
 import JailMonkey from 'jail-monkey'; // module to prevent TrustFall
 import {sign} from 'react-native-pure-jwt';
-import WelcomeMessage from "./src/components/WelcomeMessage";
-import SeatingPlan from "./src/components/SeatingPlan";
+import WelcomeMessage from './src/components/WelcomeMessage';
+import SeatingPlan from './src/components/SeatingPlan';
+import ClassView from './src/components/ClassView';
+import AppVersionView from './src/components/AppVersionView';
 
-
-const APP_VERSION = '0.3.1';
+import {domain_URL, APP_VERSION} from './src/constants';
 
 export default function App(): JSX.Element {
-  const [latestAPPDATA, setLatestAPPDATA] = useState(null);
   const [loggInError, setLoggInError] = useState(null); // check if user logged in or not
   const [userLoggedIn, setUserLoggedIn] = useState(false); // check if user logged in or not
   const [userEmail, setUserEmail] = useState('Anonymous'); // state to store user email
@@ -43,7 +43,6 @@ export default function App(): JSX.Element {
   const [markingAttendance, setMarkingAttendance] = useState(false); // state to store marking attendance
   const [userName, setUserName] = useState(''); // state to store username
   const [ClassData, setClassData] = useState(null); // state to store class data.
-  const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
 
   /**
    * Effect to configure Google Sign In for application
@@ -52,18 +51,7 @@ export default function App(): JSX.Element {
     GoogleSignin.configure();
   }, []);
 
-  useEffect(() => {
-    const fn = async () => {
-      let data = await fetch(domain_URL + '/attendance/version');
-      data = await data.json();
-      setLatestAPPDATA(data);
-    };
-    fn();
-  }, []);
-
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
 
   /**
    * Function to check validity of device for marking attendance.
@@ -91,10 +79,7 @@ export default function App(): JSX.Element {
     );
   };
 
-
-  function doNoting() {
-
-  }
+  function doNoting() {}
 
   /**
    * get height of device screen from react-native
@@ -220,24 +205,6 @@ export default function App(): JSX.Element {
     });
   }
 
-  function formatDateObject(dateObject) {
-    if (!dateObject) {
-      return '-';
-    }
-    let hour = dateObject.getHours();
-    const minute = dateObject.getMinutes();
-    let ampm = 'AM';
-
-    if (hour >= 12) {
-      ampm = 'PM';
-    }
-    if (hour > 12) {
-      hour = hour - 12;
-    }
-
-    return `${hour}:${minute} ${ampm}`;
-  }
-
   if (userLoggedIn) {
     return (
       <View>
@@ -254,57 +221,12 @@ export default function App(): JSX.Element {
             <Text style={LoginStyles.username}>{userName}</Text>
           </View>
 
-        {/*  Seating Display */}
+          {/*  Seating Display */}
 
           <SeatingPlan student={userEmail} />
 
           {/* Class Display */}
-
-
-          <View style={{width: '100%', height: '15%', alignItems: 'center'}}>
-            <View style={LoginStyles.classcontainer}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  marginTop: '6%',
-                  marginLeft: '5%',
-                  color: '#ffffff',
-                }}>
-                {ClassData?.name || 'No scheduled class for now'}
-              </Text>
-
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginTop: '4%',
-                  marginLeft: '5%',
-                  color: '#e1e1e1',
-                }}>
-                {ClassData?.attendance_start_time
-                  ? `Class Window: ${formatDateObject(
-                    ClassData.class_start_time,
-                  )} to ${formatDateObject(ClassData.class_end_time)}`
-                  : '-'}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginTop: '4%',
-                  marginLeft: '5%',
-                  color: '#e1e1e1',
-                }}>
-                {ClassData?.attendance_start_time
-                  ? `Attendance Window: ${formatDateObject(
-                    ClassData.attendance_start_time,
-                  )} to ${formatDateObject(ClassData.attendance_end_time)}`
-                  : '-'}
-              </Text>
-
-              {/*  attendance button here */}
-
-
-            </View>
-          </View>
+          <ClassView ClassData={ClassData} />
 
           <View style={{width: '100%', alignItems: 'center'}}>
             <Pressable
@@ -318,9 +240,7 @@ export default function App(): JSX.Element {
               }}
               onPress={ClassData?.attendance_time ? doNoting : RepeatedMarking}>
               <Text style={{fontSize: 15, color: '#EAEAEAFF'}}>
-                {ClassData?.attendance_time
-                  ? '👍 Present'
-                  : 'Mark Attendance'}
+                {ClassData?.attendance_time ? '👍 Present' : 'Mark Attendance'}
               </Text>
             </Pressable>
             {markingAttendance ? (
@@ -329,12 +249,6 @@ export default function App(): JSX.Element {
               ''
             )}
           </View>
-
-
-
-
-
-
         </LinearGradient>
         <FlashMessage position="bottom" style={{marginBottom: '5%'}} />
       </View>
@@ -463,47 +377,7 @@ export default function App(): JSX.Element {
           <View style={styles.root}>
             <Logo size={height * 0.4} style={styles.logo} />
           </View>
-          <View style={styles.root}>
-            <Text
-              style={{
-                fontSize: 18,
-                marginTop: '6%',
-                marginLeft: '5%',
-                color: '#ffffff',
-              }}>
-              APP_VERSION: {APP_VERSION}
-            </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                marginTop: '6%',
-                marginLeft: '5%',
-                color: '#ffffff',
-              }}>
-              {latestAPPDATA ? `LATEST_VERSION: ${latestAPPDATA.version}` : ''}
-            </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                marginTop: '6%',
-                marginLeft: '5%',
-                color: '#ffffff',
-              }}></Text>
-          </View>
-          <View style={{width: '100%', alignItems: 'center'}}>
-            {APP_VERSION !==
-            (latestAPPDATA ? latestAPPDATA.version : APP_VERSION) ? (
-              <Pressable
-                style={LoginStyles.markButton}
-                onPress={async () => {
-                  await Linking.openURL(latestAPPDATA.APK_FILE);
-                }}>
-                <Text style={{color: 'white'}}>Download Latest App</Text>
-              </Pressable>
-            ) : (
-              ''
-            )}
-          </View>
+          <AppVersionView />
           <View style={[styles.atBottom]}>
             <HavingTrouble error={loggInError} />
             <Pressable
@@ -546,7 +420,7 @@ const LoginStyles = StyleSheet.create({
     fontSize: 40,
     marginTop: '5%',
     marginHorizontal: '8%',
-    color: '#EAEAEAFF'
+    color: '#EAEAEAFF',
   },
   classcontainer: {
     backgroundColor: 'rgba(255, 251, 251, 0.21)',
