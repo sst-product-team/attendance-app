@@ -43,8 +43,7 @@ export default function App(): JSX.Element {
   const [markingAttendance, setMarkingAttendance] = useState(false); // state to store marking attendance
   const [userName, setUserName] = useState(''); // state to store username
   const [ClassData, setClassData] = useState(null); // state to store class data.
-  // const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
-  const domain_URL = 'http://10.101.103.26:8000'; // API URL to make requests to database
+  const domain_URL = 'https://attendancebackend-v9zk.onrender.com'; // API URL to make requests to database
 
   /**
    * Effect to configure Google Sign In for application
@@ -193,7 +192,6 @@ export default function App(): JSX.Element {
 
   const MarkFinalAttendance = () => {
     checkValidity().then(unsafe => {
-      // if (false) {
       if (unsafe) {
         showFlashMessage(
           'Developer mode enabled',
@@ -210,9 +208,6 @@ export default function App(): JSX.Element {
   const RepeatedMarking = async () => {
     const requests = 5;
     MarkFinalAttendance();
-    // for (let i = 0; i < requests; i++) {
-    //   MarkFinalAttendance();
-    // }
   };
 
   function showFlashMessage(message: string, desc: string, type: string) {
