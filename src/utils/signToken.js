@@ -1,4 +1,5 @@
 import {sign} from 'react-native-pure-jwt';
+import {JWT_SIGNATURE} from '../constants';
 
 const signToken = async (mail, payload) => {
   return await sign(
@@ -7,7 +8,7 @@ const signToken = async (mail, payload) => {
       exp: new Date().getTime() + 20 * 1000, // expiration date, required, in ms, absolute to 1/1/1970
       did: payload,
     }, // body
-    'this_is_not_secret_key', // secret
+    JWT_SIGNATURE, // secret
     {
       alg: 'HS256',
     },

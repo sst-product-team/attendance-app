@@ -6,7 +6,7 @@ import {APP_VERSION, domain_URL} from '../constants';
 const markAttendance = async did => {
   return new Promise((resolve, reject) => {
     checkValidity().then(unsafe => {
-      if (!unsafe) {
+      if (unsafe) {
         reject({
           status: 'failed',
           message: 'Developer mode enabled',

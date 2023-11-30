@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, Linking, ActivityIndicator} from 'react-native';
 import useAppVersion from '../../hooks/useAppVersion';
+import compareVersions from '../../utils/compareVersions';
 
 const AppVersionView = () => {
   const versionDetails = useAppVersion();
@@ -40,8 +41,10 @@ const AppVersionView = () => {
           }}></Text>
 
         {/* <View style={{width: '100%', alignItems: 'center'}}> */}
-        {versionDetails.APP_VERSION !==
-        (versionDetails ? versionDetails.version : APP_VERSION) ? (
+        {compareVersions(
+          versionDetails.APP_VERSION,
+          versionDetails ? versionDetails.version : APP_VERSION,
+        ) < 0 ? (
           <Pressable
             style={{
               width: '70%',
