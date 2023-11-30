@@ -83,7 +83,7 @@ const ClassView = ({ClassData}) => {
           {'Attendance Window: '}
           {formatDateObject(
             ClassData.attendance_start_time,
-            ClassData.attendance_start_time,
+            ClassData.attendance_end_time,
             'to',
           )}
         </Text>
