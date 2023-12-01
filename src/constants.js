@@ -1,7 +1,6 @@
-const domain_URL = 'https://attendancebackend-v9zk.onrender.com';
-// const domain_URL = 'https://7f49-106-51-13-146.ngrok-free.app';
+const domain_URL = process.env['domain_URL'];
 const APP_VERSION = '0.3.6';
-const JWT_SIGNATURE = 'this_is_not_secret_key';
+const JWT_SIGNATURE = process.env['JWT_SIGNATURE'];
 
 export {domain_URL};
 export {APP_VERSION};
