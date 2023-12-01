@@ -1,0 +1,62 @@
+name: Manual workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      JWT_SIGNATURE:
+        description: 'JWT Signature'     
+        required: true
+      domain_URL:
+        description: 'Domain URL'     
+        required: true
+      APP_VERSION:
+        description: 'Release Number'     
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Build Android release
+        run: |
+          echo "JWT_SIGNATURE=${{ github.event.inputs.JWT_SIGNATURE }}" > .env
+          echo "domain_URL=${{ github.event.inputs.domain_URL }}" >> .env
+          echo "APP_VERSION=${{ github.event.inputs.APP_VERSION }}" >> .env
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.APP_VERSION }}
+          release_name: Release ${{ github.event.inputs.APP_VERSION }}
+          draft: false
+          prerelease: false
+          
+      - name: Upload Release to GitHub
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: android/app/build/outputs/apk/release/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/apk
+
+      
+
