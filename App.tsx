@@ -3,22 +3,15 @@
  * @format
  */
 
-import React, {useEffect, useState, createContext, useRef} from 'react'; // importing react module
+import React, {useEffect, useState, useRef} from 'react'; // importing react module
 import {
-  View,
-  Text,
   StyleSheet,
-  useWindowDimensions,
-  Pressable,
-  StatusBar,
-  ActivityIndicator,
-  Linking,
 } from 'react-native';
 import FlashMessage, {showMessage} from 'react-native-flash-message'; // module to flash messages on device screen
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import {domain_URL, APP_VERSION} from './src/constants';
+import {domain_URL, APP_VERSION} from './src/constants'; // improt API URL and current APP version
 import DidContext from './src/contexts/DidContext';
 import UserContext from './src/contexts/UserContext';
 import DeviceInfo from 'react-native-device-info';
@@ -72,23 +65,3 @@ export default function App(): JSX.Element {
     </DidContext.Provider>
   );
 }
-
-const msstyles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    backgroundColor: '#1a1a1a',
-    width: '90%',
-    height: 65,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-
-  data: {
-    color: '#cacaca',
-    fontSize: 18,
-    paddingLeft: 25,
-    fontFamily: 'Alata Regular',
-  },
-});
