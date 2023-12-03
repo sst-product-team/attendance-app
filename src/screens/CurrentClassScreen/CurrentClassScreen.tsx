@@ -14,14 +14,21 @@ const CurrentClassScreen = () => {
   const {userName, userEmail} = useContext(UserContext);
 
   useEffect(() => {
+    fetchClass();
+  }, []);
+
+  function fetchClass() {
     fetchCurrentClass(did)
       .then(classs => {
         setCurrentClass(classs);
       })
-      .catch(err => {
-        // console.error(err);
-      });
-  }, []);
+      .catch(err => {});
+  }
+
+  function onSuccessMark() {
+    setCurrentClass(null);
+    fetchClass();
+  }
   return (
     <View>
       <StatusBar animated={true} backgroundColor="#1a1a1a" />
@@ -43,7 +50,10 @@ const CurrentClassScreen = () => {
 
         {/* Class Display */}
         <ClassView ClassData={currentClass} />
-        <MarkAttendanceButton ClassData={currentClass} />
+        <MarkAttendanceButton
+          ClassData={currentClass}
+          onSuccessMark={onSuccessMark}
+        />
       </LinearGradient>
     </View>
   );

@@ -5,7 +5,7 @@ import markAttendance from '../../backend/markAttendance';
 import {showMessage} from 'react-native-flash-message';
 import DidContext from '../../contexts/DidContext';
 
-const MarkAttendanceButton = ({ClassData}) => {
+const MarkAttendanceButton = ({ClassData, onSuccessMark}) => {
   const did = useContext(DidContext);
   const [markingAttendance, setMarkingAttendance] = useState(false);
 
@@ -25,6 +25,7 @@ const MarkAttendanceButton = ({ClassData}) => {
             floating: true,
             duration: 4000,
           });
+          onSuccessMark();
         })
         .catch(err => {
           setMarkingAttendance(false);
