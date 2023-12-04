@@ -19,6 +19,8 @@ import DeviceInfo from 'react-native-device-info';
 import SignInScreen from './src/screens/SignInScreen';
 import CurrentClassScreen from './src/screens/CurrentClassScreen';
 
+import { requestUserPermission, NotificationListener } from './src/utils/pushnotification_helper';
+
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
@@ -30,6 +32,11 @@ export default function App(): JSX.Element {
     DeviceInfo.getUniqueId().then(uniqueId => {
       setdid(uniqueId);
     });
+  }, []);
+
+  useEffect(() => {
+    requestUserPermission();
+    NotificationListener();
   }, []);
 
   function onSuccessRegister(initResponse) {
