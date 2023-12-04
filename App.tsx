@@ -6,6 +6,7 @@
 import React, {useEffect, useState, useRef} from 'react'; // importing react module
 import {
   StyleSheet,
+  PermissionsAndroid
 } from 'react-native';
 import FlashMessage, {showMessage} from 'react-native-flash-message'; // module to flash messages on device screen
 import {NavigationContainer} from '@react-navigation/native';
@@ -36,6 +37,26 @@ export default function App(): JSX.Element {
   }, []);
 
   useEffect(() => {
+
+    try {
+      const granted = PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        {
+          title: 'Allow Scaler School of Technology to send you notifications',
+          message:
+            'Notification access required.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      // } else {
+      // }
+    } catch (err) {
+    }
+
+
     requestUserPermission();
     NotificationListener();
   }, []);
