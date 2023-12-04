@@ -12,21 +12,19 @@ export async function requestUserPermission() {
     console.log('Authorization status:', authStatus);
     await GetFCMToken();
   }
+
+  return "NULL-TOKEN"
 }
 
 async function GetFCMToken() {
   let fcmtoken = await AsyncStorage.getItem('fcmtoken');
-  console.log(fcmtoken, 'Old token');
   if (!fcmtoken) {
     try {
       const fcmtoken = await messaging().getToken();
-      console.log('got token');
       if (fcmtoken) {
-        console.log(fcmtoken, 'New token');
         await AsyncStorage.setItem('fcmtoken', fcmtoken);
       }
     } catch (error) {
-      console.log(error, 'error in FCM Token');
     }
   }
 }

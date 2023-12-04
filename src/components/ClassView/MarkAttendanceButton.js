@@ -89,7 +89,7 @@ const MarkAttendanceButton = ({ClassData, onSuccessMark}) => {
               : '#1e2642',
           opacity: isDisabled ? 0.4 : 1,
         }}
-        onPress={RepeatedMarking}>
+        onPress={(isDisabled) ? null : RepeatedMarking}>
         <Text style={{fontSize: 15, color: '#EAEAEAFF'}}>
           {attendanceStatus}
         </Text>

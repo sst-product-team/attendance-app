@@ -25,6 +25,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
   const [did, setdid] = useState('');
+  const [fcm, setFCM] = useState('');
   const [userInfo, setUserInfo] = useState({});
   const navigationRef = useRef(null);
 

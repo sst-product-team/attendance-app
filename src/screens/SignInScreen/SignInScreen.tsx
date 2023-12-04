@@ -16,17 +16,18 @@ import DidContext from '../../contexts/DidContext';
 import UserContext from '../../contexts/UserContext';
 import signToken from '../../utils/signToken';
 import {domain_URL} from '../../constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin'; // to implement google sign in
+import PoweredBy from '../../components/PoweredBy';
 
 const registerBackend = async (userInfo, did) => {
   const userEmail = userInfo.user.email;
   const domain_name_provider = userEmail?.split('@')[1];
   const token = await signToken(userEmail, did);
-
   if (
     domain_name_provider === 'sst.scaler.com' ||
     domain_name_provider === 'scaler.com'
@@ -34,6 +35,7 @@ const registerBackend = async (userInfo, did) => {
     const UserToLogin = {
       name: userInfo.user.name,
       jwtToken: token,
+      fcmtoken: await AsyncStorage.getItem('fcmtoken'),
     };
 
     const response = await fetch(domain_URL + '/attendance/register/', {
@@ -115,6 +117,8 @@ const SignInScreen = () => {
 
             <Text style={googlestyles.data}>Login with Google</Text>
           </Pressable>
+
+          <PoweredBy />
         </View>
       </LinearGradient>
     </View>
@@ -123,7 +127,7 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
   root: {
     alignItems: 'center',
-    padding: 20,
+    padding:20,
   },
   logo: {
     maxWidth: 300,
@@ -149,13 +153,13 @@ const googlestyles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 15,
     marginTop: 10,
   },
 
   data: {
-    color: '#333333',
+    color: '#1a1a1a',
     fontSize: 18,
-    paddingLeft: 25,
     fontFamily: 'Alata Regular',
   },
 });

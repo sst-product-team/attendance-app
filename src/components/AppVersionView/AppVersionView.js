@@ -30,7 +30,7 @@ const AppVersionView = () => {
             marginLeft: '5%',
             color: '#ffffff',
           }}>
-          {versionDetails ? `LATEST_VERSION: ${versionDetails.version}` : ''}
+          {versionDetails ? `LATEST VERSION :  ${versionDetails.version}` : ''}
         </Text>
         <Text
           style={{
@@ -82,7 +82,7 @@ const AppVersionView = () => {
           marginLeft: '5%',
           color: '#ffffff',
         }}>
-        APP_VERSION: {versionDetails.APP_VERSION}
+        v{versionDetails.APP_VERSION}
       </Text>
       {content}
     </View>
