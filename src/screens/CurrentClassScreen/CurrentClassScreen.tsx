@@ -7,12 +7,13 @@ import {ClassView, MarkAttendanceButton} from '../../components/ClassView';
 import UserContext from '../../contexts/UserContext';
 import DidContext from '../../contexts/DidContext';
 import fetchCurrentClass from '../../backend/fetchCurrentClass';
+import fetchAttendance from '../../backend/fetchAttendance';
 
-const CurrentClassScreen = () => {
+const HomeScreen = () => {
   const did = useContext(DidContext);
   const [currentClass, setCurrentClass] = useState(null);
   const {userName, userEmail} = useContext(UserContext);
-
+  
   useEffect(() => {
     fetchClass();
   }, []);
@@ -27,16 +28,13 @@ const CurrentClassScreen = () => {
 
   function onSuccessMark() {
     setCurrentClass(null);
-    fetchClass();
   }
   return (
     <View>
-      <StatusBar animated={true} backgroundColor="#1a1a1a" />
-
+      <StatusBar animated={true} backgroundColor={'#1A0721'} />
       <LinearGradient
-        colors={['#5B5ABE', '#6D73FB', '#85A0FF']}
+        colors={['#1A0721', '#1A0721', '#1A0721']}
         style={{height: '100%'}}>
-        <StatusBar animated={true} backgroundColor={'#5B5ABE'} />
 
         <View style={{width: '100%', height: 'max-content'}}>
           <WelcomeMessage />
@@ -46,7 +44,7 @@ const CurrentClassScreen = () => {
 
         {/*  Seating Display */}
 
-        <SeatingPlan student={userEmail} />
+        <SeatingPlan student={userEmail} token={did} />
 
         {/* Class Display */}
         <ClassView ClassData={currentClass} />
@@ -66,10 +64,10 @@ const LoginStyles = StyleSheet.create({
     color: '#EAEAEAFF',
   },
   classcontainer: {
-    backgroundColor: 'rgba(255, 251, 251, 0.21)',
+    backgroundColor: 'rgba(255, 251, 251, 0.11)',
     width: '85%',
     height: '100%',
-    marginVertical: '8%',
+    marginVertical: '2%',
     borderRadius: 20,
   },
   markButton: {
@@ -82,4 +80,4 @@ const LoginStyles = StyleSheet.create({
     borderRadius: 20,
   },
 });
-export default CurrentClassScreen;
+export default HomeScreen;

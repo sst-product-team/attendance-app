@@ -19,15 +19,15 @@ const ClassView = ({ClassData}) => {
       <View style={{width: '100%', height: '20%', alignItems: 'center'}}>
         <View
           style={{
-            backgroundColor: 'rgba(255, 251, 251, 0.21)',
+            backgroundColor: 'rgba(255, 251, 251, 0.11)',
             width: '85%',
             height: '100%',
-            marginVertical: '8%',
+            marginVertical: '5%',
             borderRadius: 20,
           }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 16,
               marginTop: '6%',
               marginLeft: '5%',
               color: '#ffffff',
@@ -43,10 +43,10 @@ const ClassView = ({ClassData}) => {
     <View style={{width: '100%', height: '20%', alignItems: 'center'}}>
       <View
         style={{
-          backgroundColor: 'rgba(255, 251, 251, 0.21)',
-          width: '85%',
-          height: '100%',
-          marginVertical: '8%',
+          backgroundColor: 'rgba(255, 251, 251, 0.11)',
+          width: '90%',
+          height: '90%',
+          marginVertical: '4%',
           borderRadius: 20,
         }}>
         <Text

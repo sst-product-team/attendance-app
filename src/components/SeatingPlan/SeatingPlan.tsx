@@ -1,5 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { fetchAttendance } from '../../backend/fetchAttendance';
+
 
 function getFormattedDate() {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -7,44 +9,65 @@ function getFormattedDate() {
   return today.toLocaleDateString('en-US', options);
 }
 
-const SeatingPlan = (student) => {
+const SeatingPlan = (student, token) => {
 
   useEffect(() => {
+    
     fetch(API_URL + '/api?email=' + email).then((response) => {
         return response.json();
-      })
+    })
       .then(data => {
         let seat = data.seat.split("-");
         let seat_string = `${seat[0]}-${seat[1]}(${seat[2]})`
         setSeat(seat_string);
-      });
-  }, [email]);
+    });
+    
+  }, [email, token]);
 
   const [seat, setSeat] = useState('');
+  const [attendance, attendance_percentage] = useState('');
   const email = student.student.split("@")[0] + '@ms.sst.scaler.com';
   const API_URL = 'https://seating.vercel.app';
+  
   return (
     <View
-      style={{width: '100%', height: '10%', alignItems: 'center', marginBottom: '5%'}} >
-      <View style={Seating.container}>
-        <View style={{width: '60%', height: '100%', borderBottomLeftRadius: 20, borderTopLeftRadius: 20}}>
-          <View style={{width: '100%', height: '60%', justifyContent: 'center', fontFamily: 'Alata Regular', marginLeft: '8%' }}>
-            <Text style={{fontSize: 25, color: '#eaeaea'}}>
+    style={globals.container} >
+      
+      <Pressable>
+        <View style={Seating.container}>
+          <View style={Seating.topper}>
+            <Text style={Seating.topper_text}>
               Seating Plan
             </Text>
           </View>
-          <View style={{width: '100%', height: '40%', marginLeft: '10%'}}>
-            <Text style={{color: '#cacaca', fontSize: 12}}>
-              {getFormattedDate()}
+
+          <View style={Seating.loser}>
+            <Text style={Seating.loser_text}>
+              {seat}
             </Text>
           </View>
+
         </View>
-        <View style={{width: '40%', height: '100%', borderTopRightRadius: 20, borderBottomRightRadius: 20, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={{fontSize: 32, color: '#dadada', fontFamily: 'Alata Regular',}}>
-            {seat}
-          </Text>
+      </Pressable>
+
+
+
+      <Pressable>
+        <View style={Seating.container}>
+          <View style={Seating.topper}>
+            <Text style={Seating.topper_text}>
+              Attendance
+            </Text>
+          </View>
+
+          <View style={Seating.loser}>
+            <Text style={Seating.loser_text}>
+              {fetchAttendance(student.token)}%
+            </Text>
+          </View>
+
         </View>
-      </View>
+      </Pressable>
 
 
     </View>
@@ -52,15 +75,44 @@ const SeatingPlan = (student) => {
 
 }
 
-const Seating = StyleSheet.create({
+
+const globals = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(255, 251, 251, 0.21)',
-    width: '85%',
-    height: '100%',
-    marginVertical: '8%',
-    borderRadius: 20,
+    width: '100%',
+    height: '15%',
+    marginVertical: '5%',
     flexDirection: 'row',
+    // backgroundColor: 'red',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+
+  }
+});
+
+const Seating = StyleSheet.create({
+  container : {
+    width: 175,
+    height: '100%',
+    borderRadius: 20,
+    padding: 20,
+    backgroundColor: 'rgba(255, 251, 251, 0.11)',
   },
+  topper: {
+    height: '40%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topper_text: {
+    fontSize: 18,
+  },
+  loser: {
+    height: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loser_text: {
+    fontSize: 38,
+  }
 });
 
 export default SeatingPlan;

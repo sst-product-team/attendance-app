@@ -99,10 +99,10 @@ const SignInScreen = () => {
 
   return (
     <View>
-      <StatusBar animated={true} backgroundColor="#5B5ABE" />
+      <StatusBar animated={true} backgroundColor="#1A0721" />
 
       <LinearGradient
-        colors={['#5B5ABE', '#6D73FB', '#85A0FF']}
+        colors={['#1A0721', '#1A0721', '#1A0721']}
         style={{height: '100%'}}>
         <View style={styles.root}>
           <Logo size={height * 0.4} style={styles.logo} />

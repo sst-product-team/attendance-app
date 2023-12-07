@@ -18,9 +18,10 @@ import UserContext from './src/contexts/UserContext';
 import DeviceInfo from 'react-native-device-info';
 
 import SignInScreen from './src/screens/SignInScreen';
-import CurrentClassScreen from './src/screens/CurrentClassScreen';
+import HomeScreen from './src/screens/CurrentClassScreen';
 
 import { requestUserPermission, NotificationListener } from './src/utils/pushnotification_helper';
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ export default function App(): JSX.Element {
   const [fcm, setFCM] = useState('');
   const [userInfo, setUserInfo] = useState({});
   const navigationRef = useRef(null);
+
 
   useEffect(() => {
     DeviceInfo.getUniqueId().then(uniqueId => {
@@ -61,6 +63,10 @@ export default function App(): JSX.Element {
     NotificationListener();
   }, []);
 
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   function onSuccessRegister(initResponse) {
     setUserInfo({
       userName: initResponse.name,
@@ -84,7 +90,7 @@ export default function App(): JSX.Element {
             />
             <Stack.Screen
               name="CurrentClassScreen"
-              component={CurrentClassScreen}
+              component={HomeScreen}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

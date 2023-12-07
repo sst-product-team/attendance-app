@@ -12,7 +12,7 @@ const fetchCurrentClass = did => {
       .then(response => {
         return response.json();
       })
-      .then(classs => {
+      .then(classs => { 
         if (classs) {
           classs.attendance_start_time = new Date(classs.attendance_start_time);
           classs.attendance_end_time = new Date(classs.attendance_end_time);
