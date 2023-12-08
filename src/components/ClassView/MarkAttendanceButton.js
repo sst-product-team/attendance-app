@@ -81,12 +81,12 @@ const MarkAttendanceButton = ({ClassData, onSuccessMark}) => {
           padding: 20,
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: '13%',
+          marginTop: '8%',
           borderRadius: 20,
           backgroundColor:
             ClassData?.attendance_status === 'Present'
               ? 'rgb(69,122,44)'
-              : '#1e2642',
+              : '#872341',
           opacity: isDisabled ? 0.4 : 1,
         }}
         onPress={(isDisabled) ? null : RepeatedMarking}>

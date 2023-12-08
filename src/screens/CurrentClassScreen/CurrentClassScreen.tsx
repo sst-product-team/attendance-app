@@ -7,7 +7,6 @@ import {ClassView, MarkAttendanceButton} from '../../components/ClassView';
 import UserContext from '../../contexts/UserContext';
 import DidContext from '../../contexts/DidContext';
 import fetchCurrentClass from '../../backend/fetchCurrentClass';
-import fetchAttendance from '../../backend/fetchAttendance';
 
 const HomeScreen = () => {
   const did = useContext(DidContext);
