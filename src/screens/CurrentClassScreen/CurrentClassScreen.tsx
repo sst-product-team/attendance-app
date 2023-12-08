@@ -27,6 +27,7 @@ const HomeScreen = () => {
 
   function onSuccessMark() {
     setCurrentClass(null);
+    fetchClass();
   }
   return (
     <View>
