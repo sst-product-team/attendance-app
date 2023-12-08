@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, Linking, ActivityIndicator} from 'react-native';
 import useAppVersion from '../../hooks/useAppVersion';
 import compareVersions from '../../utils/compareVersions';
+import {VERSION_NAME} from '../../constants';
 
 const AppVersionView = () => {
   const versionDetails = useAppVersion();
@@ -26,17 +27,15 @@ const AppVersionView = () => {
         <Text
           style={{
             fontSize: 18,
-            marginTop: '6%',
-            marginLeft: '5%',
             color: '#ffffff',
           }}>
-          {versionDetails ? `LATEST VERSION :  ${versionDetails.version}` : ''}
+          {versionDetails
+            ? `v${versionDetails.version} ${versionDetails.VERSION_NAME}`
+            : ''}
         </Text>
         <Text
           style={{
             fontSize: 18,
-            marginTop: '6%',
-            marginLeft: '5%',
             color: '#ffffff',
           }}></Text>
 
@@ -47,19 +46,19 @@ const AppVersionView = () => {
         ) < 0 ? (
           <Pressable
             style={{
-              width: '70%',
-              backgroundColor: '#12142d',
+              // width: '80%',
+              backgroundColor: '#872341',
               padding: 20,
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: '13%',
+              marginTop: '8%',
               borderRadius: 20,
             }}
             onPress={async () => {
               await Linking.openURL(versionDetails.APK_FILE);
             }}>
             <Text style={{color: 'white'}}>
-              {versionDetails.buttonButtonText}
+              Download {versionDetails.VERSION_NAME}
             </Text>
           </Pressable>
         ) : (
@@ -78,12 +77,11 @@ const AppVersionView = () => {
       <Text
         style={{
           fontSize: 18,
-          marginTop: '6%',
-          marginLeft: '5%',
           color: '#ffffff',
         }}>
-        v{versionDetails.APP_VERSION}
+        {`v${versionDetails.APP_VERSION} ${VERSION_NAME}`}
       </Text>
+      <Text style={{color: 'white', fontSize: 40}}>{content ? '⬇' : ''}</Text>
       {content}
     </View>
   );
