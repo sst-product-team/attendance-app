@@ -15,6 +15,9 @@ on:
       VERSION_NAME:
         description: 'Version name'     
         required: true
+      SKIP_DEVELOPER_MODE_CHECK:
+        description: 'Skip Developer Mode Check'
+        default: false
       
 
 jobs:
@@ -39,6 +42,7 @@ jobs:
           echo "domain_URL=${{ github.event.inputs.domain_URL }}" >> .env
           echo "APP_VERSION=${{ github.event.inputs.APP_VERSION }}" >> .env
           echo "VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}" >> .env
+          echo "SKIP_DEVELOPER_MODE_CHECK=${{ github.event.inputs.SKIP_DEVELOPER_MODE_CHECK }}" >> .env
 
           cd android
           ./gradlew assembleRelease
