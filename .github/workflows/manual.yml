@@ -12,6 +12,10 @@ on:
       APP_VERSION:
         description: 'Release Number'     
         required: true
+      VERSION_NAME:
+        description: 'Version name'     
+        required: true
+      
 
 jobs:
   build:
@@ -31,9 +35,11 @@ jobs:
 
       - name: Build Android release
         run: |
-          echo "JWT_SIGNATURE=${{ github.event.inputs.JWT_SIGNATURE }}" > .env
+          echo "JWT_SIGNATURE=${{ github.event.inputs.JWT_SIGNATURE }}" >> .env
           echo "domain_URL=${{ github.event.inputs.domain_URL }}" >> .env
           echo "APP_VERSION=${{ github.event.inputs.APP_VERSION }}" >> .env
+          echo "VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}" >> .env
+
           cd android
           ./gradlew assembleRelease
 
