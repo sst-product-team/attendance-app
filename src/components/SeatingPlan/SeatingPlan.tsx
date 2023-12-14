@@ -104,6 +104,7 @@ const Seating = StyleSheet.create({
   },
   topper_text: {
     fontSize: 18,
+    color: '#ffffff',
   },
   loser: {
     height: '60%',
@@ -112,6 +113,7 @@ const Seating = StyleSheet.create({
   },
   loser_text: {
     fontSize: 38,
+    color: '#ffffff',
   }
 });
 

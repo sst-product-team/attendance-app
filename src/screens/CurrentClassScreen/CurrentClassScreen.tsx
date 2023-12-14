@@ -7,7 +7,7 @@ import {ClassView, MarkAttendanceButton} from '../../components/ClassView';
 import UserContext from '../../contexts/UserContext';
 import DidContext from '../../contexts/DidContext';
 import fetchCurrentClass from '../../backend/fetchCurrentClass';
-
+import AllClassView from '../../components/AllClassView';
 const HomeScreen = () => {
   const did = useContext(DidContext);
   const [currentClass, setCurrentClass] = useState(null);
@@ -45,6 +45,9 @@ const HomeScreen = () => {
         {/*  Seating Display */}
 
         <SeatingPlan student={userEmail} token={did} />
+
+        {/* New Class View */}
+        <AllClassView token={did} />
 
         {/* Class Display */}
         <ClassView ClassData={currentClass} />

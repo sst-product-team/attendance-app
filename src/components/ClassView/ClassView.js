@@ -20,9 +20,8 @@ const ClassView = ({ClassData}) => {
         <View
           style={{
             backgroundColor: 'rgba(255, 251, 251, 0.11)',
-            width: '85%',
+            width: '90%',
             height: '100%',
-            marginVertical: '5%',
             borderRadius: 20,
           }}>
           <Text
