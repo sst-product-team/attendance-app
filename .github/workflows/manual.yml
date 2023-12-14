@@ -38,6 +38,7 @@ jobs:
 
       - name: Build Android release
         run: |
+          echo "" >> .env
           echo "JWT_SIGNATURE=${{ github.event.inputs.JWT_SIGNATURE }}" >> .env
           echo "domain_URL=${{ github.event.inputs.domain_URL }}" >> .env
           echo "APP_VERSION=${{ github.event.inputs.APP_VERSION }}" >> .env
