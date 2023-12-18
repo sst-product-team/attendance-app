@@ -28,30 +28,23 @@ const registerBackend = async (userInfo, did) => {
   const userEmail = userInfo.user.email;
   const domain_name_provider = userEmail?.split('@')[1];
   const token = await signToken(userEmail, did);
-  if (
-    domain_name_provider === 'sst.scaler.com' ||
-    domain_name_provider === 'scaler.com'
-  ) {
-    const UserToLogin = {
-      name: userInfo.user.name,
-      jwtToken: token,
-      fcmtoken: await AsyncStorage.getItem('fcmtoken'),
-    };
+  const UserToLogin = {
+    name: userInfo.user.name,
+    jwtToken: token,
+    fcmtoken: await AsyncStorage.getItem('fcmtoken'),
+  };
 
-    const response = await fetch(domain_URL + '/attendance/register/', {
-      method: 'POST',
-      body: JSON.stringify(UserToLogin),
-    });
+  const response = await fetch(domain_URL + '/attendance/register/', {
+    method: 'POST',
+    body: JSON.stringify(UserToLogin),
+  });
 
-    if (response.ok) {
-      const data = await response.json();
-      return {status: 'success', ...data};
-    } else {
-      const errorMessage = await response.json();
-      return {status: 'error', message: errorMessage.message};
-    }
+  if (response.ok) {
+    const data = await response.json();
+    return {status: 'success', ...data};
   } else {
-    return {status: 'error', message: 'User Not authorised to signin'};
+    const errorMessage = await response.json();
+    return {status: 'error', message: errorMessage.message};
   }
 };
 
@@ -127,7 +120,7 @@ const SignInScreen = () => {
 const styles = StyleSheet.create({
   root: {
     alignItems: 'center',
-    padding:20,
+    padding: 20,
   },
   logo: {
     maxWidth: 300,

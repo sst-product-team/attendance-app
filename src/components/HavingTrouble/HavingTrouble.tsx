@@ -3,20 +3,24 @@ import {View, Text, StyleSheet} from 'react-native';
 
 const HavingTrouble = ({error}) => {
   return (
-    <View style={error ? styles.Error : styles.HavingTrouble}>
-      <Text>{error ? error : ''}</Text>
+    <View style={styles.HavingTrouble}>
+      <Text style={error ? styles.ErrorText : styles.DefaultText}>
+        {error ? error : ''}
+      </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   HavingTrouble: {
-    color: '#1a1a1a',
     marginTop: '5%',
   },
-  Error: {
+  DefaultText: {
+    color: '#1a1a1a',
+  },
+  ErrorText: {
     color: 'red',
-    marginTop: '5%',
+    fontSize: 15, // Adjust the font size as needed
   },
 });
 
