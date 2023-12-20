@@ -66,7 +66,7 @@ const getBluetoothService = () => {
               });
             } else {
               console.log(device.id);
-              if (deviceIdentifiers.includes(device.id)) {
+              if (!deviceIdentifiers || deviceIdentifiers.includes(device.id)) {
                 manager.stopDeviceScan();
                 resolve({
                   device,

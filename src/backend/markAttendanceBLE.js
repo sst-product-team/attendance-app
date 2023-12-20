@@ -9,7 +9,6 @@ const markAttendanceBLE = () => {
       const tokenBLE = await getMessageFromBLE(bluetoothService);
       bluetoothService.destroy();
 
-      console.log(`send ${tokenBLE.data} to server`);
       resolve({
         status: 'success',
         message: 'Marked successfully',
@@ -24,11 +23,11 @@ const markAttendanceBLE = () => {
 const getMessageFromBLE = BluetoothService => {
   const serviceUUID = '1821';
   const characteristicUUID = '1822';
-  const deviceIdentifiers = ['7C:70:DB:2D:D4:F7'];
+  // const deviceIdentifiers = ['7C:70:DB:2D:D4:F7'];
+  const deviceIdentifiers = null;
 
   return new Promise(async (resolve, reject) => {
     const hasPermission = await requestBluetoothPermission();
-    console.log(`hasPermission: ${hasPermission}`);
     if (!hasPermission) {
       reject({
         status: 'error',
@@ -38,35 +37,36 @@ const getMessageFromBLE = BluetoothService => {
     }
 
     try {
-      const timeoutId = setTimeout(async () => {
-        await BluetoothService.stopScan();
-        console.log('Scan Stopped by timeout');
-        reject({
-          status: 'error',
-          message: 'Device not found in scan',
-          error: '',
-        });
-        return;
-      }, 5000);
-      console.log('Starting Scan');
-
-      const {device} = await BluetoothService.startScan(
+      const scanPromise = BluetoothService.startScan(
         serviceUUID,
         deviceIdentifiers,
       );
-      BluetoothService.stopScan();
-      console.log('Scan Stopped');
-      clearTimeout(timeoutId);
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject({
+            status: 'error',
+            message: 'Scan timed out',
+            error: '',
+          });
+        }, 5000); // Set your desired timeout here (e.g., 5000 milliseconds)
+      });
+
+      const {device} = await Promise.race([scanPromise, timeoutPromise]);
 
       const res = await BluetoothService.connectAndReadCharacteristic(
         device,
         serviceUUID,
         characteristicUUID,
       );
+
       resolve(res);
     } catch (error) {
       reject(error);
+    } finally {
+      BluetoothService.stopScan();
     }
   });
 };
+
 export default markAttendanceBLE;
