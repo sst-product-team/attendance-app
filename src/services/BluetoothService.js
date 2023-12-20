@@ -1,5 +1,10 @@
 import {decode} from 'base-64';
-import {BleManager} from 'react-native-ble-plx';
+import {
+  BleError,
+  BleErrorCode,
+  BleManager,
+  State as BluetoothState,
+} from 'react-native-ble-plx';
 
 import {PermissionsAndroid, Platform} from 'react-native';
 
@@ -83,6 +88,37 @@ const getBluetoothService = () => {
     stopScan: () => {
       manager.stopDeviceScan();
     },
+    initializeBLE: onBluetoothPowerOff =>
+      new Promise((resolve, reject) => {
+        const subscription = manager.onStateChange(state => {
+          switch (state) {
+            case BluetoothState.Unsupported:
+              subscription.remove();
+              reject({
+                status: 'error',
+                message: 'BluetoothState Unsupported',
+              });
+              break;
+            case BluetoothState.PoweredOff:
+              onBluetoothPowerOff();
+              manager.enable().catch((error: BleError) => {
+                if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
+                  requestBluetoothPermission();
+                }
+              });
+              break;
+            case BluetoothState.Unauthorized:
+              requestBluetoothPermission();
+              break;
+            case BluetoothState.PoweredOn:
+              resolve();
+              subscription.remove();
+              break;
+            default:
+            // console.error('Unsupported state: ', state);
+          }
+        }, true);
+      }),
 
     connectAndReadCharacteristic: (device, serviceId, characteristicId) => {
       return new Promise((resolve, reject) => {

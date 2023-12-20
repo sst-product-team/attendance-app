@@ -6,6 +6,7 @@ const markAttendanceBLE = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const bluetoothService = getBluetoothService();
+      await bluetoothService.initializeBLE(() => {});
       const tokenBLE = await getMessageFromBLE(bluetoothService);
       bluetoothService.destroy();
 
