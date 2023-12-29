@@ -78,7 +78,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
-        versionName "1.0.0"
+        versionName "1.1.0"
     }
     signingConfigs {
         debug {
@@ -126,3 +126,4 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 
 
 apply plugin: 'com.google.gms.google-services'
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"

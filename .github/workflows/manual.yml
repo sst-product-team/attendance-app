@@ -45,6 +45,8 @@ jobs:
           echo "VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}" >> .env
           echo "SKIP_DEVELOPER_MODE_CHECK=${{ github.event.inputs.SKIP_DEVELOPER_MODE_CHECK }}" >> .env
 
+          sh ./setup/run.sh
+
           cd android
           ./gradlew assembleRelease
 
