@@ -13,6 +13,5 @@ async function fetchData(did) {
 
 export async function fetchAllClasses(did) {
     const data = await fetchData(did);
-    console.log(data);
     return data;
 }

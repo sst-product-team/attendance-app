@@ -1,4 +1,8 @@
+import { useState, useEffect, useContext } from 'react';
+import DidContext from '../../contexts/DidContext';
 import {View, Text} from 'react-native';
+import MarkAttendanceButton from './MarkAttendanceButton';
+import fetchCurrentClass from '../../backend/fetchCurrentClass';
 
 function formatDateObject(start, end, join) {
   let startString = start.toLocaleDateString();
@@ -13,7 +17,26 @@ function formatDateObject(start, end, join) {
   return `${startString} ${startTimeString} ${join} ${endString}`;
 }
 
-const ClassView = ({ClassData}) => {
+
+
+const ClassView = () => {
+  const did = useContext(DidContext);
+  const [currentClass, setCurrentClass] = useState(null);
+
+  useEffect(() => {
+    fetchClass();
+  }, []);
+
+  function fetchClass() {
+    fetchCurrentClass(did)
+      .then(classs => {
+        setCurrentClass(classs);
+      })
+      .catch(err => {});
+  }
+
+  const ClassData = currentClass;
+
   if (!ClassData) {
     return (
       <View style={{width: '100%', height: '20%', alignItems: 'center'}}>
@@ -38,14 +61,21 @@ const ClassView = ({ClassData}) => {
     );
   }
 
+  function onSuccessMark() {
+    setCurrentClass(null);
+    fetchClass();
+  }
+
+
+  const atw = 'Attendance Window: '+ formatDateObject(ClassData.attendance_start_time,ClassData.attendance_end_time,'to',)
+  
   return (
     <View style={{width: '100%', height: '20%', alignItems: 'center'}}>
       <View
         style={{
-          backgroundColor: 'rgba(255, 251, 251, 0.11)',
+          backgroundColor: 'rgba(255, 251, 251, 0.05)',
           width: '90%',
           height: '90%',
-          marginVertical: '4%',
           borderRadius: 20,
         }}>
         <Text
@@ -79,15 +109,11 @@ const ClassView = ({ClassData}) => {
             marginLeft: '5%',
             color: '#e1e1e1',
           }}>
-          {'Attendance Window: '}
-          {formatDateObject(
-            ClassData.attendance_start_time,
-            ClassData.attendance_end_time,
-            'to',
-          )}
+            {ClassData.marked_by_bsm? "Attendance will be marked by BSM": atw} 
         </Text>
 
         {/*  attendance button here */}
+        {ClassData.marked_by_bsm? null: <MarkAttendanceButton ClassData={ClassData} onSuccessMark={onSuccessMark} />}
       </View>
     </View>
   );

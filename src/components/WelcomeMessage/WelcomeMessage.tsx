@@ -28,7 +28,7 @@ const WelcomeMessage = () => {
 
 const styles = StyleSheet.create({
   welcomemessage: {
-    color: "#fffddd",
+    color: "#ffffff",
     fontSize: 18,
     marginHorizontal: '8%',
     marginTop: '10%',

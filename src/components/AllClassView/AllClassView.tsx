@@ -18,8 +18,6 @@ function formatDateObject(start, end, join) {
   }
 
 const AllClassView = (did) => {;
-
-    // console.log(did);
     const [classesView, setClassesView] = useState((
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.shimmer}>
@@ -31,16 +29,16 @@ const AllClassView = (did) => {;
     useEffect(() => {
         const fetchData = async () => {
           const data = await fetchAllClasses(did.token);
-          console.log(data);
           var componentList = [];
             for (var i = 0; i < data.length; i++) {
                 const atw = formatDateObject(data[i].attendance_start_time, data[i].attendance_end_time, ' - ');
                 const ctw = formatDateObject(data[i].class_start_time, data[i].class_end_time, ' - ');
                 const ats = data[i].attendance_status=="Absent";
+                const isAttendanceMandatory = data[i].is_attendance_mandatory ? "Mandatory" : "Optional";
                 componentList.push(
                     <View key={i} style={styles.classContainer}>
                         <Text style={{fontSize: 17, color:'#cacaca'}}>{data[i].name}</Text>
-                        <Text style={{fontSize: 14, color:'#b0b0b0', paddingTop: 5}}>{ctw}</Text>
+                        <Text style={{fontSize: 14, color:'#b0b0b0', paddingTop: 5}}>{ctw} ({isAttendanceMandatory})</Text>
                         <Text style={{fontSize: 14, color:ats?'#BF3F3F':'green', paddingTop: 5}}>{ ats? "Absent" : "Present"}</Text>
                     </View>
                 );
@@ -70,7 +68,7 @@ const AllClassView = (did) => {;
 
 const styles = StyleSheet.create({
     shimmer: {
-        // backgroundColor: 'rgba(255, 251, 251, 0.05)',
+        backgroundColor: 'rgba(255, 251, 251, 0.05)',
         width: "70%",
         height: "85%",
         borderRadius: 20,
@@ -81,7 +79,7 @@ const styles = StyleSheet.create({
     scrollView: {
     },
     classContainer: {
-        backgroundColor: 'rgba(255, 251, 251, 0.11)',
+        backgroundColor: 'rgba(255, 251, 251, 0.05)',
         width: 300,
         height: "85%",
         borderRadius: 20,

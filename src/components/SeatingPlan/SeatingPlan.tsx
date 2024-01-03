@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { fetchAttendance } from '../../backend/fetchAttendance';
+import { showMessage } from "react-native-flash-message";
 
 
 function getFormattedDate() {
@@ -28,6 +29,37 @@ const SeatingPlan = (student, token) => {
   const [attendance, attendance_percentage] = useState('');
   const email = student.student.split("@")[0] + '@ms.sst.scaler.com';
   const API_URL = 'https://seating.vercel.app';
+
+  const student_attendance_data = fetchAttendance(student.token)
+
+  function showCompleteAttendance() {
+    showMessage({
+      message: "Attendance Record",
+      description: student_attendance_data.attendance_record,
+      type: "error",
+      floating: true,
+    });
+  }
+
+  function showSeatingDetails() {
+    showMessage({
+      message: "Seating Details",
+      description: "This seating is 0-indexed.",
+      type: "error",
+      floating: true,
+      icon: "info",
+    });
+    
+  }
+
+  function redirectToCompleteAttendancePage() {
+    const student_id = student.student.split("@")[0];
+    const complete_attendance_link = `https://attendancebackend-v9zk.onrender.com/attendance/studentAttendance/${student_id}/`;
+    Linking.openURL(complete_attendance_link);
+  }
+
+
+  
   
   return (
     <View
@@ -41,18 +73,18 @@ const SeatingPlan = (student, token) => {
             </Text>
           </View>
 
-          <View style={Seating.loser}>
+          <Pressable style={Seating.loser} onPress={showSeatingDetails}>
             <Text style={Seating.loser_text}>
               {seat}
             </Text>
-          </View>
+          </Pressable>
 
         </View>
       </Pressable>
 
 
 
-      <Pressable>
+      <Pressable onPress={showCompleteAttendance} onLongPress={redirectToCompleteAttendancePage}>
         <View style={Seating.container}>
           <View style={Seating.topper}>
             <Text style={Seating.topper_text}>
@@ -60,11 +92,11 @@ const SeatingPlan = (student, token) => {
             </Text>
           </View>
 
-          <View style={Seating.loser}>
+          <Pressable style={Seating.loser} onPress={showCompleteAttendance} onLongPress={redirectToCompleteAttendancePage}>
             <Text style={Seating.loser_text}>
-              {fetchAttendance(student.token)}%
+              {student_attendance_data.attendance_percentage}%
             </Text>
-          </View>
+          </Pressable>
 
         </View>
       </Pressable>
@@ -95,7 +127,7 @@ const Seating = StyleSheet.create({
     height: '100%',
     borderRadius: 20,
     padding: 20,
-    backgroundColor: 'rgba(255, 251, 251, 0.11)',
+    backgroundColor: 'rgba(255, 251, 251, 0.05)',
   },
   topper: {
     height: '40%',

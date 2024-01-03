@@ -77,11 +77,11 @@ const MarkAttendanceButton = ({ClassData, onSuccessMark}) => {
       <Pressable
         disabled={isDisabled}
         style={{
-          width: '70%',
+          width: '80%',
           padding: 20,
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: '8%',
+          marginTop: '18%',
           borderRadius: 20,
           backgroundColor:
             ClassData?.attendance_status === 'Present'

@@ -4,6 +4,7 @@ import {useState} from 'react';
 
 export function fetchAttendance(did) {
     const [attendance, setAttendance] = useState(0);
+    const [record, setRecord] = useState("");
     fetch(domain_URL+'/attendance/get_aggregated_attendance/', {
         method: 'POST',
         body: JSON.stringify({
@@ -14,20 +15,22 @@ export function fetchAttendance(did) {
         return response.json();
     })
     .then(data => {
-        // console.log("All classes = ", data);
         var totalAttendance = 0;
         var totalClass = 0;
-        for(var i in data)
-            // console.log("Present = ", data[i].Present || 0)
+        var ats = "";
+        for(var i in data){
+            ats += `attended ${data[i].Present || 0} out of ${data[i].totalClassCount} of ${i}\n`;
             totalAttendance += data[i].Present || 0;
-        for(var i in data)
             totalClass += data[i].totalClassCount;
-        // console.log("Total Attendance = ", totalAttendance);
-        // console.log("Total Class = ", totalClass);
+        }
         const attendance = (totalAttendance/totalClass)*100;
         setAttendance(Math.round(attendance));
+        setRecord(ats);
     });
 
-    return attendance;
+    return {
+        "attendance_percentage": attendance,
+        "attendance_record": record
+    };
 
 };
