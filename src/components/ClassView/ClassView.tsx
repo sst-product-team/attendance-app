@@ -109,11 +109,11 @@ const ClassView = () => {
             marginLeft: '5%',
             color: '#e1e1e1',
           }}>
-            {ClassData.marked_by_bsm? "Attendance will be marked by BSM": atw} 
+            {ClassData.marked_by_bsm_only? "Attendance will be marked by BSM": atw} 
         </Text>
 
         {/*  attendance button here */}
-        {ClassData.marked_by_bsm? null: <MarkAttendanceButton ClassData={ClassData} onSuccessMark={onSuccessMark} />}
+        {ClassData.marked_by_bsm_only? null: <MarkAttendanceButton ClassData={ClassData} onSuccessMark={onSuccessMark} />}
       </View>
     </View>
   );
