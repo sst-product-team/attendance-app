@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Scaler School of Technology</string>
-    <string moduleConfig="true" name="CodePushDeploymentKey">0n85BoKK6o4OkStSsQi0CL_ArdQNz8Sh9sRGl</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">{Your Deployment Key}</string>
 </resources>

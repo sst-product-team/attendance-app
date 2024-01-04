@@ -1,4 +1,4 @@
-name: Manual workflow
+name: Release / Staging workflow
 
 on:
   workflow_dispatch:
@@ -18,10 +18,13 @@ on:
       SKIP_DEVELOPER_MODE_CHECK:
         description: 'Skip Developer Mode Check'
         default: false
-      
+      RELEASE_TYPE:
+        description: 'Release Type RELEASE|STAGING'
+        required: true
+        default: 'RELEASE'
 
 jobs:
-  build:
+  build_android:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -36,7 +39,7 @@ jobs:
         run: |
           yarn install
 
-      - name: Build Android release
+      - name: Setting Secrets
         run: |
           echo "" >> .env
           echo "JWT_SIGNATURE=${{ github.event.inputs.JWT_SIGNATURE }}" >> .env
@@ -45,8 +48,21 @@ jobs:
           echo "VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}" >> .env
           echo "SKIP_DEVELOPER_MODE_CHECK=${{ github.event.inputs.SKIP_DEVELOPER_MODE_CHECK }}" >> .env
 
+          sed -i "s/{Your app secret here}/${{ secrets.CODE_PUSH_APP_SECRET }}/" "./android/app/src/main/assets/appcenter-config.json"
+
+          if [[ "${{ github.event.inputs.RELEASE_TYPE }}" == "RELEASE" ]]; then
+            sed -i "s/{Your Deployment Key}/${{ secrets.CODE_PUSH_DEPLOYMENT_KEY_PRODUCTION }}/" "./android/app/src/main/res/values/strings.xml"
+          elif [[ "${{ github.event.inputs.RELEASE_TYPE }}" == "STAGING" ]]; then
+            sed -i "s/{Your Deployment Key}/${{ secrets.CODE_PUSH_DEPLOYMENT_KEY_STAGING }}/" "./android/app/src/main/res/values/strings.xml"
+          else
+            echo "Invalid RELEASE_TYPE. Supported values are RELEASE, STAGING."
+            exit 1
+          fi
+
           sh ./setup/run.sh
 
+      - name: Build Android release
+        run: |
           cd android
           ./gradlew assembleRelease
 
@@ -70,6 +86,3 @@ jobs:
           asset_path: android/app/build/outputs/apk/release/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/apk
-
-      
-
