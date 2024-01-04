@@ -1,0 +1,58 @@
+name: Staging codepush workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      JWT_SIGNATURE:
+        description: 'JWT Signature'     
+        required: true
+      domain_URL:
+        description: 'Domain URL'     
+        required: true
+      APP_VERSION:
+        description: 'Release Number'     
+        required: true
+      VERSION_NAME:
+        description: 'Version name'     
+        required: true
+      SKIP_DEVELOPER_MODE_CHECK:
+        description: 'Skip Developer Mode Check'
+        default: false
+
+env:
+  APP_CENTER_TOKEN_ANDROID: ${{ secrets.APP_CENTER_TOKEN_ANDROID }}
+  APP_NAME_ANDROID: ${{ secrets.APP_NAME }}
+
+jobs:
+
+  update-android:
+    name: Update Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          sh ./setup/run.sh
+
+      - name: Setting Secrets
+        run: |
+          echo "" >> .env
+          echo "JWT_SIGNATURE=${{ github.event.inputs.JWT_SIGNATURE }}" >> .env
+          echo "domain_URL=${{ github.event.inputs.domain_URL }}" >> .env
+          echo "APP_VERSION=${{ github.event.inputs.APP_VERSION }}" >> .env
+          echo "VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}" >> .env
+          echo "SKIP_DEVELOPER_MODE_CHECK=${{ github.event.inputs.SKIP_DEVELOPER_MODE_CHECK }}" >> .env
+
+          sed -i "s/{Your app secret here}/${{ secrets.CODE_PUSH_APP_SECRET }}/" "./android/app/src/main/assets/appcenter-config.json"
+          sed -i "s/{Your Deployment Key}/${{ secrets.CODE_PUSH_DEPLOYMENT_KEY_STAGING }}/" "./android/app/src/main/res/values/strings.xml"
+
+      - name: Deploy to Codepush
+        uses: TripleSpeeder/codepush-action@master
+        with:
+          directory: .
+          args: release-react -a ${{ env.APP_NAME_ANDROID }} -d Staging
+        env:
+          APPCENTER_ACCESS_TOKEN: ${{ secrets.APP_CENTER_TOKEN_ANDROID }}
