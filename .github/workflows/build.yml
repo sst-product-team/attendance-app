@@ -7,8 +7,9 @@ on:
         description: 'JWT Signature'     
         required: true
       domain_URL:
-        description: 'Domain URL'     
+        description: 'Domain URL'
         required: true
+        default: https://attendancebackend-v9zk.onrender.com
       APP_VERSION:
         description: 'Release Number'     
         required: true
@@ -17,11 +18,19 @@ on:
         required: true
       SKIP_DEVELOPER_MODE_CHECK:
         description: 'Skip Developer Mode Check'
-        default: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
       RELEASE_TYPE:
         description: 'Release Type RELEASE|STAGING'
         required: true
         default: 'RELEASE'
+        type: choice
+        options:
+          - RELEASE
+          - STAGING
 
 jobs:
   build_android:
