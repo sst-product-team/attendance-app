@@ -75,6 +75,11 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
+      - name: Convert RELEASE_TYPE to lowercase
+        id: convert_release_type
+        run: |
+          echo "RELEASE_TYPE_LOWER=$(echo "${{ github.event.inputs.RELEASE_TYPE }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -82,16 +87,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.event.inputs.APP_VERSION }}
-          release_name: ${{ github.event.inputs.APP_VERSION }} ${{ github.event.inputs.VERSION_NAME }}
+          release_name: v${{ github.event.inputs.APP_VERSION }} ${{ env.RELEASE_TYPE_LOWER }}
           draft: false
           prerelease: false
-          
+
       - name: Upload Release to GitHub
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: android/app/build/outputs/apk/release/app-release.apk
-          asset_name: app-release.apk
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: README.md
+          asset_name: app-${{ env.RELEASE_TYPE_LOWER }}.apk
           asset_content_type: application/apk
