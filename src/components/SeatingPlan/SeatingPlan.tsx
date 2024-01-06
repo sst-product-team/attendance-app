@@ -38,6 +38,7 @@ const SeatingPlan = (student, token) => {
       description: student_attendance_data.attendance_record,
       type: "error",
       floating: true,
+      duration: 4500,
     });
   }
 
