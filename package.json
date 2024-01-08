@@ -27,6 +27,7 @@
     "react-native-flash-message": "^0.4.2",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-get-location": "^4.0.0",
+    "react-native-google-mobile-ads": "^12.8.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-pure-jwt": "^3.0.2",
     "react-native-push-notification": "^8.1.1",

@@ -1,4 +1,8 @@
 {
   "name": "sst",
-  "displayName": "Scaler School of Technology"
+  "displayName": "Scaler School of Technology",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-5607953789101029~8965703761",
+    "ios_app_id": "ca-app-pub-5607953789101029~8965703761"
+  }
 }
