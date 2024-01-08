@@ -35,6 +35,8 @@ on:
 jobs:
   build_android:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -97,6 +99,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: README.md
+          asset_path: android/app/build/outputs/apk/release/app-release.apk
           asset_name: app-${{ env.RELEASE_TYPE_LOWER }}.apk
           asset_content_type: application/apk
