@@ -108,6 +108,7 @@ dependencies {
     implementation project(':react-native-pure-jwt')
     implementation platform("com.google.firebase:firebase-bom:29.0.4")
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
