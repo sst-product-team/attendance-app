@@ -59,6 +59,15 @@ Now that you have successfully run the app, let's modify it.
 
 You've successfully run and modified your React Native App. :partying_face:
 
+### Screenshots
+
+<div style="display: flex; justify-content: space-between;">
+  <img alt="Home Page" src="https://raw.githubusercontent.com/sst-product-team/attendance-app/master/android/app/src/main/res/drawable/launch_screen.png" width="30%">
+  <img alt="Attendance Page" src="https://github.com/sst-product-team/attendance-app/assets/39624018/66f96efe-96c2-4330-8b84-fa0246966858" width="30%">
+  <img alt="Attendance Page" src="https://github.com/sst-product-team/attendance-app/assets/39624018/fbd41b05-284e-4fae-984d-7ba3f93acf51" width="30%">
+</div>
+Home Page and Attendance Page
+
 ### Now what?
 
 - If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
@@ -77,3 +86,4 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+This should display the images in your README file under the "Screenshots" section.
