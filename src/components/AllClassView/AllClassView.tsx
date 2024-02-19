@@ -33,13 +33,13 @@ const AllClassView = (did) => {;
             for (var i = 0; i < data.length; i++) {
                 const atw = formatDateObject(data[i].attendance_start_time, data[i].attendance_end_time, ' - ');
                 const ctw = formatDateObject(data[i].class_start_time, data[i].class_end_time, ' - ');
-                const ats = data[i].attendance_status=="Absent";
+                const ats = data[i].attendance_status=="Present";
                 const isAttendanceMandatory = data[i].is_attendance_mandatory ? "Mandatory" : "Optional";
                 componentList.push(
                     <View key={i} style={styles.classContainer}>
                         <Text style={{fontSize: 17, color:'#cacaca'}}>{data[i].name}</Text>
                         <Text style={{fontSize: 14, color:'#b0b0b0', paddingTop: 5}}>{ctw} ({isAttendanceMandatory})</Text>
-                        <Text style={{fontSize: 14, color:ats?'#BF3F3F':'green', paddingTop: 5}}>{ ats? "Absent" : "Present"}</Text>
+                        <Text style={{fontSize: 14, color:ats?'green':'#BF3F3F', paddingTop: 5}}>{ data[i].attendance_status }</Text>
                     </View>
                 );
             }
